@@ -84,7 +84,7 @@
     --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     
-    /* FIXED Z-Index Scale */
+    /* Z-Index Scale */
     --z-background: -10;
     --z-blob: -8;
     --z-floating-code: -5;
@@ -156,7 +156,6 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     padding-top: 80px;
-    /* FIXED: Enable pointer events on body */
     pointer-events: auto;
     cursor: default;
 }
@@ -220,7 +219,6 @@ body {
     height: 80px;
     display: flex;
     align-items: center;
-    /* FIXED: Ensure header allows pointer events */
     pointer-events: auto;
 }
 
@@ -240,7 +238,6 @@ body {
     text-decoration: none;
     color: var(--color-text-primary);
     transition: transform var(--transition-base);
-    /* FIXED: Ensure clickability */
     pointer-events: auto;
     cursor: pointer;
 }
@@ -298,7 +295,6 @@ body {
     background: var(--color-surface);
     backdrop-filter: blur(10px);
     transition: all var(--transition-base);
-    /* FIXED: Ensure clickability */
     pointer-events: auto;
     cursor: pointer;
 }
@@ -309,7 +305,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* FIXED Main Container - Resolved overlapping and clickability */
+/* Main Container */
 .container {
     position: relative;
     width: min(800px, 90vw);
@@ -323,16 +319,14 @@ body {
     border: 1px solid var(--color-border);
     z-index: var(--z-form);
     margin-top: 100px;
-    /* FIXED: Enable pointer events and cursor */
     pointer-events: auto;
     cursor: default;
 }
 
-/* FIXED Form Boxes - Prevented overlapping */
+/* FIXED: Login and Register positioning - Your solution integrated */
 .form-box {
     position: absolute;
-    right: 0;
-    width: 50%;
+    top: 0;
     height: 100%;
     background: rgba(255, 255, 255, 0.02);
     display: flex;
@@ -342,29 +336,44 @@ body {
     color: var(--color-text-primary);
     text-align: center;
     padding: var(--space-6);
-    z-index: calc(var(--z-form) + 10);
-    transition: all 0.6s ease-in-out 1.2s, visibility 0s 1s;
-    /* FIXED: Critical pointer events and cursor fixes */
     pointer-events: auto;
     cursor: default;
-    /* FIXED: Prevent overlapping with explicit positioning */
     transform: translateZ(0);
 }
 
-.container.active .form-box {
-    right: 50%;
+/* Login form positioning */
+.form-box.login {
+    left: 0;
+    width: 50%;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 2;
+    transition: all 0.6s ease-in-out;
 }
 
+/* Register form positioning */
 .form-box.register {
-    visibility: hidden;
-    /* FIXED: Prevent interaction when hidden */
+    right: 0;
+    width: 50%;
+    opacity: 0;
     pointer-events: none;
+    z-index: 1;
+    transition: all 0.6s ease-in-out;
+}
+
+/* Slide animation when active */
+.container.active .form-box.login {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
 }
 
 .container.active .form-box.register {
-    visibility: visible;
-    /* FIXED: Enable interaction when visible */
+    transform: translateX(-100%);
+    opacity: 1;
     pointer-events: auto;
+    z-index: 2;
 }
 
 .form-box h1 {
@@ -384,17 +393,15 @@ body {
     line-height: 1.5;
 }
 
-/* FIXED Form Styles - Resolved cursor and clickability */
+/* Form Styles */
 form {
     width: 100%;
     max-width: 280px;
-    /* FIXED: Ensure forms are interactive */
     pointer-events: auto;
 }
 
 .input-group {
     margin-bottom: var(--space-4);
-    /* FIXED: Ensure input groups are interactive */
     pointer-events: auto;
 }
 
@@ -402,7 +409,6 @@ form {
     position: relative;
     display: flex;
     align-items: center;
-    /* FIXED: Ensure input boxes are interactive */
     pointer-events: auto;
 }
 
@@ -418,7 +424,6 @@ form {
     font-weight: 500;
     transition: all var(--transition-base);
     font-family: var(--font-family-primary);
-    /* FIXED: Critical cursor and interaction fixes */
     pointer-events: auto;
     cursor: text;
     z-index: 10;
@@ -429,7 +434,6 @@ form {
     border-color: var(--color-primary);
     background: var(--color-surface-hover);
     box-shadow: 0 0 0 3px var(--color-border-focus);
-    /* FIXED: Ensure focus state is interactive */
     cursor: text;
 }
 
@@ -469,7 +473,6 @@ form {
     padding: var(--space-1);
     border-radius: var(--radius-md);
     transition: all var(--transition-base);
-    /* FIXED: Critical button interaction fixes */
     pointer-events: auto;
     cursor: pointer;
     z-index: 15;
@@ -551,7 +554,6 @@ form {
     color: var(--color-primary);
     text-decoration: none;
     transition: color var(--transition-base);
-    /* FIXED: Ensure link is clickable */
     pointer-events: auto;
     cursor: pointer;
 }
@@ -561,7 +563,7 @@ form {
     text-decoration: underline;
 }
 
-/* FIXED Button Styles - Resolved clickability issues */
+/* Button Styles */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -578,7 +580,6 @@ form {
     position: relative;
     overflow: hidden;
     min-height: 42px;
-    /* FIXED: Critical button interaction fixes */
     pointer-events: auto;
     cursor: pointer;
     z-index: 20;
@@ -625,7 +626,6 @@ form {
     position: relative;
     z-index: 2;
     transition: opacity var(--transition-base);
-    /* FIXED: Ensure text doesn't interfere with clicks */
     pointer-events: none;
 }
 
@@ -637,7 +637,6 @@ form {
     justify-content: center;
     opacity: 0;
     transition: opacity var(--transition-base);
-    /* FIXED: Ensure loader doesn't interfere with clicks */
     pointer-events: none;
 }
 
@@ -683,7 +682,7 @@ form {
     padding: 0 var(--space-3);
 }
 
-/* FIXED Social Icons - Resolved clickability */
+/* Social Icons */
 .social-icons {
     display: flex;
     justify-content: center;
@@ -704,7 +703,6 @@ form {
     background: var(--color-surface);
     backdrop-filter: blur(10px);
     transition: all var(--transition-base);
-    /* FIXED: Critical social button interaction fixes */
     pointer-events: auto;
     cursor: pointer;
     z-index: 15;
@@ -734,13 +732,12 @@ form {
     color: #1877f2;
 }
 
-/* FIXED Toggle Box - Prevented interference with forms */
+/* Toggle Box */
 .toggle-box {
     position: absolute;
     width: 100%;
     height: 100%;
     z-index: var(--z-toggle);
-    /* FIXED: Prevent toggle from interfering with form interactions */
     pointer-events: none;
 }
 
@@ -755,7 +752,6 @@ form {
     z-index: 1;
     transition: 1.8s ease-in-out;
     box-shadow: 0 0 50px rgba(245, 158, 11, 0.3);
-    /* FIXED: Prevent background from interfering */
     pointer-events: none;
 }
 
@@ -776,7 +772,6 @@ form {
     transition: 0.6s ease-in-out;
     padding: 0 var(--space-6);
     text-align: center;
-    /* FIXED: Enable interaction for toggle panels */
     pointer-events: auto;
 }
 
@@ -814,7 +809,7 @@ form {
     opacity: 0.9;
 }
 
-/* FIXED Floating Code Animation - Prevented interference */
+/* Floating Code Animation */
 .floating-code {
     position: absolute;
     inset: 0;
@@ -836,7 +831,6 @@ form {
     backdrop-filter: blur(10px);
     opacity: 0;
     animation: codeFloat 20s linear infinite;
-    /* FIXED: Ensure code snippets don't interfere */
     pointer-events: none;
 }
 
@@ -900,7 +894,6 @@ form {
     backdrop-filter: var(--backdrop-blur);
     z-index: var(--z-visualizer);
     box-shadow: var(--shadow-lg);
-    /* FIXED: Ensure visualizer is interactive if needed */
     pointer-events: auto;
 }
 
@@ -952,7 +945,6 @@ form {
     visibility: hidden;
     transition: all var(--transition-base);
     backdrop-filter: blur(8px);
-    /* FIXED: Ensure modal is interactive */
     pointer-events: auto;
 }
 
@@ -973,7 +965,6 @@ form {
     transition: transform var(--transition-base);
     max-width: 400px;
     margin: var(--space-5);
-    /* FIXED: Ensure modal content is interactive */
     pointer-events: auto;
 }
 
@@ -1016,7 +1007,6 @@ form {
     gap: var(--space-3);
     max-width: 400px;
     margin-top: 80px;
-    /* FIXED: Ensure toast container is interactive */
     pointer-events: auto;
 }
 
@@ -1061,7 +1051,7 @@ form {
     border-color: rgba(59, 130, 246, 0.3);
 }
 
-/* FIXED Mobile Responsive - Prevented overlapping on mobile */
+/* Mobile Responsive - UPDATED for new positioning */
 @media screen and (max-width: 768px) {
     body {
         padding-top: 70px;
@@ -1074,18 +1064,40 @@ form {
         margin: 10px auto;
     }
     
-    .form-box {
-        bottom: 0;
+    /* UPDATED: Mobile form positioning */
+    .form-box.login {
+        left: 0;
+        top: 30%;
         width: 100%;
         height: 70%;
-        padding: var(--space-5) var(--space-4);
-        /* FIXED: Maintain interaction on mobile */
+        opacity: 1;
         pointer-events: auto;
+        z-index: 2;
     }
 
-    .container.active .form-box {
-        right: 0;
-        bottom: 30%;
+    .form-box.register {
+        left: 0;
+        top: 100%;
+        width: 100%;
+        height: 70%;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .container.active .form-box.login {
+        transform: translateY(-100%);
+        opacity: 0;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .container.active .form-box.register {
+        transform: translateY(-100%);
+        top: 30%;
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 2;
     }
 
     .toggle-box::before {
