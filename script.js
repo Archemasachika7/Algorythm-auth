@@ -93,7 +93,7 @@ class AuthManager {
                 this.parentElement.style.transform = 'scale(1.02)';
                 this.parentElement.style.transition = 'transform 0.2s ease';
             });
-            
+
             input.addEventListener('blur', function() {
                 this.parentElement.style.transform = 'scale(1)';
             });
@@ -105,7 +105,6 @@ class AuthManager {
         
         if (typeof gsap !== 'undefined') {
             const forms = document.querySelectorAll('.form-box');
-            
             forms.forEach(form => {
                 gsap.from(form, {
                     opacity: 0,
@@ -120,6 +119,7 @@ class AuthManager {
 
     async handleLogin(e) {
         e.preventDefault();
+        
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
         const submitBtn = e.target.querySelector('.btn');
@@ -134,14 +134,12 @@ class AuthManager {
         try {
             // Simulate API call
             await this.simulateAuth({ email, password });
-            
             this.setButtonSuccess(submitBtn);
             this.showSuccessModal('Welcome back to AlgoRhythm!');
             
             setTimeout(() => {
                 this.redirectToApp();
             }, 2000);
-            
         } catch (error) {
             this.setButtonLoading(submitBtn, false);
             this.showNotification(error.message, 'error');
@@ -150,6 +148,7 @@ class AuthManager {
 
     async handleRegister(e) {
         e.preventDefault();
+        
         const name = document.getElementById('registerName').value;
         const email = document.getElementById('registerEmail').value;
         const password = document.getElementById('registerPassword').value;
@@ -177,14 +176,12 @@ class AuthManager {
         try {
             // Simulate API call
             await this.simulateAuth({ name, email, password });
-            
             this.setButtonSuccess(submitBtn);
             this.showSuccessModal('Welcome to AlgoRhythm!');
             
             setTimeout(() => {
                 this.redirectToApp();
             }, 2000);
-            
         } catch (error) {
             this.setButtonLoading(submitBtn, false);
             this.showNotification(error.message, 'error');
@@ -194,16 +191,13 @@ class AuthManager {
     async handleSocialAuth(provider) {
         try {
             this.showNotification(`Connecting to ${provider}...`, 'info');
-            
             // Simulate social auth
             await this.simulateSocialAuth(provider);
-            
             this.showSuccessModal(`Successfully connected with ${provider}!`);
             
             setTimeout(() => {
                 this.redirectToApp();
             }, 2000);
-            
         } catch (error) {
             this.showNotification(`Failed to connect with ${provider}`, 'error');
         }
@@ -247,19 +241,16 @@ class AuthManager {
     showNotification(message, type = 'info') {
         // Remove existing notifications
         document.querySelectorAll('.notification').forEach(notif => notif.remove());
-        
+
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
-        notification.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-            <span>${message}</span>
-        `;
+        notification.innerHTML = `${message}`;
         
         document.body.appendChild(notification);
-        
+
         // Show notification
         setTimeout(() => notification.classList.add('show'), 100);
-        
+
         // Auto remove
         setTimeout(() => {
             notification.classList.remove('show');
@@ -281,11 +272,10 @@ class AuthManager {
 
         // Create floating shapes
         const shapes = [];
-        
         for (let i = 0; i < 30; i++) {
             const geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
-            const material = new THREE.MeshBasicMaterial({ 
-                color: 0xF59E0B, 
+            const material = new THREE.MeshBasicMaterial({
+                color: 0xF59E0B,
                 wireframe: true,
                 transparent: true,
                 opacity: 0.4
@@ -323,7 +313,7 @@ class AuthManager {
         // Mouse interaction
         let mouseX = 0;
         let mouseY = 0;
-        
+
         document.addEventListener('mousemove', (e) => {
             mouseX = (e.clientX / window.innerWidth) * 2 - 1;
             mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -368,7 +358,7 @@ class AuthManager {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()+-=[]{}|;:,.<>?".split("");
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()+-=[]{}|;:,.<?".split("");
         const font_size = 12;
         const columns = canvas.width / font_size;
         const drops = [];
@@ -391,6 +381,7 @@ class AuthManager {
                 if (drops[i] * font_size > canvas.height && Math.random() > 0.975) {
                     drops[i] = 0;
                 }
+
                 drops[i]++;
             }
         };
@@ -415,10 +406,10 @@ class AuthManager {
         const animateFollower = () => {
             followerX += (mouseX - followerX) * 0.1;
             followerY += (mouseY - followerY) * 0.1;
-            
+
             follower.style.left = followerX + 'px';
             follower.style.top = followerY + 'px';
-            
+
             requestAnimationFrame(animateFollower);
         };
 
@@ -477,7 +468,7 @@ function closeSuccessModal() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded, initializing AuthManager...');
     new AuthManager();
-    
+
     // Entrance animations
     if (typeof gsap !== 'undefined') {
         gsap.from('.container', {
@@ -487,14 +478,14 @@ document.addEventListener('DOMContentLoaded', () => {
             ease: "back.out(1.7)",
             delay: 0.3
         });
-        
+
         gsap.from('.auth-header', {
             y: -100,
             opacity: 0,
             duration: 0.8,
             ease: "power2.out"
         });
-        
+
         gsap.from('.music-visualizer', {
             x: 100,
             opacity: 0,
