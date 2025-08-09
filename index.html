@@ -112,10 +112,27 @@
             </div>
         </section>
 
-        <!-- Register Form -->
+        <!-- Register Form - FIXED: Added Google/GitHub options -->
         <section class="form-box register" id="register-section">
             <h1>Create Account</h1>
             <p>Join AlgoRhythm and start your coding journey</p>
+            
+            <!-- FIXED: Added social signup options at the top -->
+            <div class="social-signup-section">
+                <div class="social-icons" role="group" aria-label="Quick signup options">
+                    <button class="social-btn google-btn" data-provider="google" aria-label="Sign up with Google">
+                        <i class="fab fa-google" aria-hidden="true"></i>
+                    </button>
+                    <button class="social-btn github-btn" data-provider="github" aria-label="Sign up with GitHub">
+                        <i class="fab fa-github" aria-hidden="true"></i>
+                    </button>
+                </div>
+                
+                <div class="divider">
+                    <span>or create with email</span>
+                </div>
+            </div>
+            
             <form id="registerForm" novalidate>
                 <div class="input-group">
                     <label for="registerName" class="sr-only">Full Name</label>
@@ -202,22 +219,6 @@
                 </button>
                 <div id="register-status" class="sr-only" role="status" aria-live="polite"></div>
             </form>
-            
-            <div class="divider">
-                <span>or sign up with</span>
-            </div>
-            
-            <div class="social-icons" role="group" aria-label="Social signup options">
-                <button class="social-btn google-btn" data-provider="google" aria-label="Sign up with Google">
-                    <i class="fab fa-google" aria-hidden="true"></i>
-                </button>
-                <button class="social-btn github-btn" data-provider="github" aria-label="Sign up with GitHub">
-                    <i class="fab fa-github" aria-hidden="true"></i>
-                </button>
-                <button class="social-btn facebook-btn" data-provider="facebook" aria-label="Sign up with Facebook">
-                    <i class="fab fa-facebook-f" aria-hidden="true"></i>
-                </button>
-            </div>
         </section>
 
         <!-- Toggle Box -->
