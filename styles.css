@@ -85,7 +85,14 @@
     --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     
-    /* Z-Index Scale */
+    /* Z-Index Scale - FIXED */
+    --z-background: -10;
+    --z-blob: -8;
+    --z-floating-code: 1;
+    --z-form: 10;
+    --z-toggle: 20;
+    --z-header: 100;
+    --z-visualizer: 200;
     --z-dropdown: 1000;
     --z-sticky: 1020;
     --z-fixed: 1030;
@@ -122,7 +129,7 @@
     padding: 8px;
     text-decoration: none;
     border-radius: var(--radius-md);
-    z-index: 9999;
+    z-index: var(--z-tooltip);
     transition: top var(--transition-fast);
 }
 
@@ -165,30 +172,31 @@ body {
     position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    padding-top: 100px; /* FIXED: Add padding to prevent header overlap */
 }
 
-/* Canvas Backgrounds */
+/* Canvas Backgrounds - FIXED Z-INDEX */
 #auth-3d-canvas,
 #matrix-canvas {
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: -10;
+    z-index: var(--z-background);
 }
 
 #matrix-canvas {
     opacity: 0.1;
-    z-index: -9;
+    z-index: calc(var(--z-background) + 1);
 }
 
-/* Animated Blobs */
+/* Animated Blobs - FIXED Z-INDEX */
 .blob {
     position: fixed;
     inset: 0;
     pointer-events: none;
     filter: blur(120px);
     opacity: 0.6;
-    z-index: -8;
+    z-index: var(--z-blob);
 }
 
 .blob-1 {
@@ -212,7 +220,7 @@ body {
     50% { transform: translate(-40px, 30px) scale(1.2); }
 }
 
-/* Cursor Follower */
+/* Cursor Follower - FIXED Z-INDEX */
 .cursor-follower {
     position: fixed;
     pointer-events: none;
@@ -233,17 +241,20 @@ body {
     }
 }
 
-/* Header */
+/* Header - FIXED Z-INDEX AND POSITIONING */
 .auth-header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: var(--z-fixed);
+    z-index: var(--z-header);
     padding: var(--space-6) var(--space-8);
-    background: rgba(10, 10, 15, 0.8);
+    background: rgba(10, 10, 15, 0.95); /* FIXED: More opaque background */
     backdrop-filter: var(--backdrop-blur);
     border-bottom: 1px solid var(--color-border);
+    height: 80px; /* FIXED: Explicit height */
+    display: flex;
+    align-items: center;
 }
 
 .header-content {
@@ -252,6 +263,7 @@ body {
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
+    width: 100%;
 }
 
 .logo-container {
@@ -324,11 +336,11 @@ body {
     transform: translateY(-2px);
 }
 
-/* Main Container */
+/* Main Container - FIXED POSITIONING AND Z-INDEX */
 .container {
     position: relative;
     width: min(850px, 95vw);
-    height: min(600px, 90vh);
+    height: min(550px, 80vh); /* FIXED: Reduced height to prevent overlap */
     background: linear-gradient(135deg, var(--color-surface), rgba(255, 255, 255, 0.02));
     margin: var(--space-5);
     border-radius: var(--radius-2xl);
@@ -338,14 +350,16 @@ body {
     border: 1px solid var(--color-border);
     animation: containerFloat 8s ease-in-out infinite;
     container-type: inline-size;
+    z-index: var(--z-form); /* FIXED: Proper z-index */
+    margin-top: 120px; /* FIXED: Ensure proper spacing from header */
 }
 
 @keyframes containerFloat {
     0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-5px); } /* FIXED: Reduced float distance */
 }
 
-/* Form Boxes */
+/* Form Boxes - FIXED Z-INDEX */
 .form-box {
     position: absolute;
     right: 0;
@@ -358,8 +372,8 @@ body {
     justify-content: center;
     color: var(--color-text-primary);
     text-align: center;
-    padding: var(--space-10);
-    z-index: 1;
+    padding: var(--space-8); /* FIXED: Reduced padding */
+    z-index: calc(var(--z-form) + 5); /* FIXED: Above toggle */
     transition: all 0.6s ease-in-out 1.2s, visibility 0s 1s;
 }
 
@@ -376,7 +390,7 @@ body {
 }
 
 .form-box h1 {
-    font-size: var(--font-size-4xl);
+    font-size: var(--font-size-3xl); /* FIXED: Reduced font size */
     font-weight: 700;
     margin-bottom: var(--space-2);
     background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
@@ -387,7 +401,7 @@ body {
 
 .form-box p {
     font-size: var(--font-size-sm);
-    margin-bottom: var(--space-8);
+    margin-bottom: var(--space-6); /* FIXED: Reduced margin */
     color: var(--color-text-secondary);
     line-height: 1.5;
 }
@@ -395,11 +409,11 @@ body {
 /* Form Styles */
 form {
     width: 100%;
-    max-width: 320px;
+    max-width: 300px; /* FIXED: Reduced max width */
 }
 
 .input-group {
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-4); /* FIXED: Reduced margin */
 }
 
 .input-box {
@@ -410,12 +424,12 @@ form {
 
 .input-box input {
     width: 100%;
-    padding: var(--space-4) var(--space-12) var(--space-4) var(--space-5);
+    padding: var(--space-3) var(--space-10) var(--space-3) var(--space-4); /* FIXED: Reduced padding */
     background: var(--color-surface);
     border-radius: var(--radius-xl);
     border: 1px solid var(--color-border);
     outline: none;
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm); /* FIXED: Smaller font */
     color: var(--color-text-primary);
     font-weight: 500;
     transition: all var(--transition-base);
@@ -443,8 +457,8 @@ form {
 
 .input-box i {
     position: absolute;
-    right: var(--space-5);
-    font-size: var(--font-size-lg);
+    right: var(--space-4); /* FIXED: Adjusted position */
+    font-size: var(--font-size-base); /* FIXED: Smaller icon */
     color: var(--color-text-muted);
     transition: color var(--transition-base);
     pointer-events: none;
@@ -456,14 +470,15 @@ form {
 
 .password-toggle {
     position: absolute;
-    right: var(--space-12);
+    right: var(--space-10); /* FIXED: Adjusted position */
     background: none;
     border: none;
     color: var(--color-text-muted);
     cursor: pointer;
-    padding: var(--space-2);
+    padding: var(--space-1); /* FIXED: Reduced padding */
     border-radius: var(--radius-md);
     transition: all var(--transition-base);
+    z-index: 1;
 }
 
 .password-toggle:hover {
@@ -487,7 +502,7 @@ form {
 
 .strength-bar {
     width: 100%;
-    height: 4px;
+    height: 3px; /* FIXED: Thinner bar */
     background: var(--color-surface);
     border-radius: var(--radius-full);
     overflow: hidden;
@@ -528,12 +543,12 @@ form {
 
 /* Forgot Link */
 .forgot-link {
-    margin: calc(-1 * var(--space-4)) 0 var(--space-4);
+    margin: calc(-1 * var(--space-3)) 0 var(--space-3); /* FIXED: Reduced margin */
     text-align: right;
 }
 
 .forgot-link a {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs); /* FIXED: Smaller font */
     color: var(--color-primary);
     text-decoration: none;
     transition: color var(--transition-base);
@@ -551,7 +566,7 @@ form {
     justify-content: center;
     gap: var(--space-2);
     font-family: var(--font-family-primary);
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm); /* FIXED: Smaller font */
     font-weight: 600;
     line-height: 1;
     border: none;
@@ -561,7 +576,7 @@ form {
     text-decoration: none;
     position: relative;
     overflow: hidden;
-    min-height: 48px;
+    min-height: 44px; /* FIXED: Reduced height */
 }
 
 .btn-primary {
@@ -585,7 +600,7 @@ form {
     background: transparent;
     border: 2px solid var(--color-text-primary);
     color: var(--color-text-primary);
-    padding: var(--space-3) var(--space-8);
+    padding: var(--space-2) var(--space-6); /* FIXED: Reduced padding */
 }
 
 .btn-outline:hover {
@@ -625,8 +640,8 @@ form {
 }
 
 .spinner {
-    width: 20px;
-    height: 20px;
+    width: 18px; /* FIXED: Smaller spinner */
+    height: 18px;
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-top-color: white;
     border-radius: var(--radius-full);
@@ -641,9 +656,9 @@ form {
 .divider {
     display: flex;
     align-items: center;
-    margin: var(--space-6) 0;
+    margin: var(--space-4) 0; /* FIXED: Reduced margin */
     color: var(--color-text-muted);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs); /* FIXED: Smaller font */
 }
 
 .divider::before,
@@ -655,26 +670,26 @@ form {
 }
 
 .divider span {
-    padding: 0 var(--space-4);
+    padding: 0 var(--space-3); /* FIXED: Reduced padding */
 }
 
 /* Social Icons */
 .social-icons {
     display: flex;
     justify-content: center;
-    gap: var(--space-4);
-    margin-top: var(--space-5);
+    gap: var(--space-3); /* FIXED: Reduced gap */
+    margin-top: var(--space-4); /* FIXED: Reduced margin */
 }
 
 .social-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
+    width: 42px; /* FIXED: Smaller buttons */
+    height: 42px;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-xl);
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-base); /* FIXED: Smaller icon */
     color: var(--color-text-primary);
     background: var(--color-surface);
     backdrop-filter: blur(10px);
@@ -705,11 +720,12 @@ form {
     color: #1877f2;
 }
 
-/* Toggle Box */
+/* Toggle Box - FIXED Z-INDEX */
 .toggle-box {
     position: absolute;
     width: 100%;
     height: 100%;
+    z-index: var(--z-toggle); /* FIXED: Proper z-index below forms */
 }
 
 .toggle-box::before {
@@ -738,9 +754,9 @@ form {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 2;
+    z-index: 3; /* FIXED: Above the before element */
     transition: 0.6s ease-in-out;
-    padding: 0 var(--space-10);
+    padding: 0 var(--space-8); /* FIXED: Reduced padding */
     text-align: center;
 }
 
@@ -765,26 +781,26 @@ form {
 }
 
 .toggle-panel h2 {
-    font-size: var(--font-size-3xl);
+    font-size: var(--font-size-2xl); /* FIXED: Reduced font size */
     font-weight: 700;
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-3); /* FIXED: Reduced margin */
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .toggle-panel p {
-    margin-bottom: var(--space-8);
-    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-6); /* FIXED: Reduced margin */
+    font-size: var(--font-size-base); /* FIXED: Reduced font size */
     line-height: 1.6;
     opacity: 0.9;
 }
 
-/* Floating Code Animation */
+/* Floating Code Animation - FIXED Z-INDEX */
 .floating-code {
     position: absolute;
     inset: 0;
     pointer-events: none;
     overflow: hidden;
-    z-index: 3;
+    z-index: var(--z-floating-code); /* FIXED: Below forms */
 }
 
 .code-snippet {
@@ -854,7 +870,7 @@ form {
     }
 }
 
-/* Music Visualizer */
+/* Music Visualizer - FIXED Z-INDEX */
 .music-visualizer {
     position: fixed;
     bottom: var(--space-8);
@@ -867,7 +883,7 @@ form {
     border: 1px solid var(--color-border);
     border-radius: var(--radius-2xl);
     backdrop-filter: var(--backdrop-blur);
-    z-index: var(--z-sticky);
+    z-index: var(--z-visualizer); /* FIXED: Proper z-index */
     box-shadow: var(--shadow-lg);
 }
 
@@ -906,7 +922,7 @@ form {
     font-weight: 500;
 }
 
-/* Modal Styles */
+/* Modal Styles - FIXED Z-INDEX */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -968,7 +984,7 @@ form {
     line-height: 1.5;
 }
 
-/* Toast Notifications */
+/* Toast Notifications - FIXED Z-INDEX */
 .toast-container {
     position: fixed;
     top: var(--space-8);
@@ -978,6 +994,7 @@ form {
     flex-direction: column;
     gap: var(--space-3);
     max-width: 400px;
+    margin-top: 80px; /* FIXED: Account for header height */
 }
 
 .toast {
@@ -1027,7 +1044,7 @@ form {
         bottom: 0;
         width: 100%;
         height: 70%;
-        padding: var(--space-8) var(--space-5);
+        padding: var(--space-6) var(--space-4);
     }
 
     .container.active .form-box {
@@ -1051,7 +1068,7 @@ form {
     .toggle-panel {
         width: 100%;
         height: 30%;
-        padding: var(--space-5);
+        padding: var(--space-4);
     }
 
     .toggle-panel.toggle-left {
@@ -1074,11 +1091,11 @@ form {
     }
 
     .toggle-panel h2 {
-        font-size: var(--font-size-2xl);
+        font-size: var(--font-size-xl);
     }
 
     .toggle-panel p {
-        font-size: var(--font-size-base);
+        font-size: var(--font-size-sm);
     }
 
     .floating-code {
@@ -1088,13 +1105,23 @@ form {
 
 /* Traditional Media Queries for Fallback */
 @media screen and (max-width: 768px) {
+    body {
+        padding-top: 80px; /* FIXED: Reduced padding for mobile */
+    }
+    
+    .container {
+        margin-top: 100px; /* FIXED: Reduced margin for mobile */
+        height: min(500px, 75vh); /* FIXED: Smaller height on mobile */
+    }
+    
     .auth-header {
         padding: var(--space-4);
+        height: 70px; /* FIXED: Smaller header on mobile */
     }
 
     .header-content {
         flex-direction: column;
-        gap: var(--space-4);
+        gap: var(--space-3); /* FIXED: Reduced gap */
     }
 
     .music-visualizer {
@@ -1108,6 +1135,7 @@ form {
         right: var(--space-5);
         left: var(--space-5);
         max-width: none;
+        margin-top: 70px; /* FIXED: Account for smaller mobile header */
     }
 }
 
@@ -1115,24 +1143,26 @@ form {
     .container {
         margin: var(--space-2);
         border-radius: var(--radius-xl);
+        margin-top: 90px; /* FIXED: Smaller margin for small screens */
+        height: min(450px, 70vh); /* FIXED: Even smaller on very small screens */
     }
 
     .form-box {
-        padding: var(--space-6) var(--space-4);
+        padding: var(--space-5) var(--space-3);
     }
 
     .toggle-panel h2 {
-        font-size: var(--font-size-xl);
+        font-size: var(--font-size-lg);
     }
 
     .social-icons {
-        gap: var(--space-3);
+        gap: var(--space-2);
     }
 
     .social-btn {
-        width: 44px;
-        height: 44px;
-        font-size: var(--font-size-base);
+        width: 40px;
+        height: 40px;
+        font-size: var(--font-size-sm);
     }
 }
 
