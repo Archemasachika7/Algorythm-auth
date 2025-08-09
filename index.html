@@ -16,12 +16,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     
-    <!-- External scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/three.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js" defer></script>
-    
-    <!-- View Transitions API -->
-    <meta name="view-transition" content="same-origin">
+    <!-- External scripts - FIXED: Made them async to prevent blocking -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/three.min.js" async></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js" async></script>
 </head>
 <body>
     <!-- Skip to main content for accessibility -->
@@ -53,7 +50,7 @@
     </header>
 
     <!-- Main Container -->
-    <main class="container" id="main-content" role="main">
+    <main class="container" id="container">
         <!-- Login Form -->
         <section class="form-box login" id="login-section">
             <h1>Welcome Back</h1>
@@ -293,6 +290,40 @@
     <!-- Toast notifications container -->
     <div id="toast-container" class="toast-container" aria-live="polite" role="region" aria-label="Notifications"></div>
 
-    <script src="script.js"></script>
+    <!-- FIXED: Load script at the end and handle dependencies properly -->
+    <script>
+        // Wait for all dependencies to load before initializing
+        let scriptsLoaded = {
+            three: false,
+            gsap: false
+        };
+        
+        function checkScriptsAndInit() {
+            if (typeof THREE !== 'undefined') scriptsLoaded.three = true;
+            if (typeof gsap !== 'undefined') scriptsLoaded.gsap = true;
+            
+            // Initialize even if some scripts aren't loaded (graceful degradation)
+            if (Object.values(scriptsLoaded).some(loaded => loaded) || document.readyState === 'complete') {
+                if (typeof AuthManager === 'undefined') {
+                    const script = document.createElement('script');
+                    script.src = 'script.js';
+                    script.onload = () => console.log('✅ Script loaded successfully');
+                    script.onerror = () => console.error('❌ Failed to load script.js');
+                    document.head.appendChild(script);
+                }
+            }
+        }
+        
+        // Check periodically until ready
+        const initChecker = setInterval(() => {
+            checkScriptsAndInit();
+            if (window.authManager) {
+                clearInterval(initChecker);
+            }
+        }, 100);
+        
+        // Fallback initialization after 2 seconds
+        setTimeout(checkScriptsAndInit, 2000);
+    </script>
 </body>
 </html>
