@@ -1,4 +1,3 @@
-/* Modern CSS Reset and Base Styles */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 *,
@@ -85,38 +84,35 @@
     --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     
-    /* Z-Index Scale - FIXED */
+    /* FIXED Z-Index Scale */
     --z-background: -10;
     --z-blob: -8;
-    --z-floating-code: 1;
+    --z-floating-code: -5;
+    --z-toggle: 5;
     --z-form: 10;
-    --z-toggle: 20;
     --z-header: 100;
     --z-visualizer: 200;
-    --z-dropdown: 1000;
-    --z-sticky: 1020;
-    --z-fixed: 1030;
-    --z-modal-backdrop: 1040;
-    --z-modal: 1050;
-    --z-popover: 1060;
-    --z-tooltip: 1070;
-}
-
-/* CSS Custom Properties for Dark Mode Support */
-@media (prefers-color-scheme: light) {
-    :root {
-        --color-bg-primary: #f8fafc;
-        --color-bg-secondary: #ffffff;
-        --color-text-primary: #1e293b;
-        --color-text-secondary: rgba(30, 41, 59, 0.7);
-        --color-surface: rgba(0, 0, 0, 0.05);
-    }
+    --z-modal: 1000;
+    --z-tooltip: 2000;
 }
 
 /* Focus Management */
 :focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
+}
+
+/* Screen Reader Only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 /* Skip Link for Accessibility */
@@ -135,19 +131,6 @@
 
 .skip-link:focus {
     top: 6px;
-}
-
-/* Screen Reader Only */
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
 }
 
 /* Base Styles */
@@ -172,10 +155,13 @@ body {
     position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    padding-top: 100px; /* FIXED: Add padding to prevent header overlap */
+    padding-top: 80px;
+    /* FIXED: Enable pointer events on body */
+    pointer-events: auto;
+    cursor: default;
 }
 
-/* Canvas Backgrounds - FIXED Z-INDEX */
+/* Canvas Backgrounds */
 #auth-3d-canvas,
 #matrix-canvas {
     position: fixed;
@@ -189,7 +175,7 @@ body {
     z-index: calc(var(--z-background) + 1);
 }
 
-/* Animated Blobs - FIXED Z-INDEX */
+/* Animated Blobs */
 .blob {
     position: fixed;
     inset: 0;
@@ -220,28 +206,7 @@ body {
     50% { transform: translate(-40px, 30px) scale(1.2); }
 }
 
-/* Cursor Follower - FIXED Z-INDEX */
-.cursor-follower {
-    position: fixed;
-    pointer-events: none;
-    z-index: var(--z-tooltip);
-    width: 100px;
-    height: 100px;
-    border-radius: var(--radius-full);
-    background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
-    filter: blur(30px);
-    opacity: 0;
-    transition: opacity var(--transition-base);
-    transform: translate(-50%, -50%);
-}
-
-@media (hover: hover) and (pointer: fine) {
-    .cursor-follower {
-        opacity: 1;
-    }
-}
-
-/* Header - FIXED Z-INDEX AND POSITIONING */
+/* Header */
 .auth-header {
     position: fixed;
     top: 0;
@@ -249,12 +214,14 @@ body {
     right: 0;
     z-index: var(--z-header);
     padding: var(--space-6) var(--space-8);
-    background: rgba(10, 10, 15, 0.95); /* FIXED: More opaque background */
+    background: rgba(10, 10, 15, 0.95);
     backdrop-filter: var(--backdrop-blur);
     border-bottom: 1px solid var(--color-border);
-    height: 80px; /* FIXED: Explicit height */
+    height: 80px;
     display: flex;
     align-items: center;
+    /* FIXED: Ensure header allows pointer events */
+    pointer-events: auto;
 }
 
 .header-content {
@@ -273,6 +240,9 @@ body {
     text-decoration: none;
     color: var(--color-text-primary);
     transition: transform var(--transition-base);
+    /* FIXED: Ensure clickability */
+    pointer-events: auto;
+    cursor: pointer;
 }
 
 .logo-container:hover {
@@ -328,6 +298,9 @@ body {
     background: var(--color-surface);
     backdrop-filter: blur(10px);
     transition: all var(--transition-base);
+    /* FIXED: Ensure clickability */
+    pointer-events: auto;
+    cursor: pointer;
 }
 
 .back-link:hover {
@@ -336,11 +309,11 @@ body {
     transform: translateY(-2px);
 }
 
-/* Main Container - FIXED POSITIONING AND Z-INDEX */
+/* FIXED Main Container - Resolved overlapping and clickability */
 .container {
     position: relative;
-    width: min(850px, 95vw);
-    height: min(550px, 80vh); /* FIXED: Reduced height to prevent overlap */
+    width: min(800px, 90vw);
+    height: min(520px, 75vh);
     background: linear-gradient(135deg, var(--color-surface), rgba(255, 255, 255, 0.02));
     margin: var(--space-5);
     border-radius: var(--radius-2xl);
@@ -348,18 +321,14 @@ body {
     box-shadow: var(--shadow-2xl);
     overflow: hidden;
     border: 1px solid var(--color-border);
-    animation: containerFloat 8s ease-in-out infinite;
-    container-type: inline-size;
-    z-index: var(--z-form); /* FIXED: Proper z-index */
-    margin-top: 120px; /* FIXED: Ensure proper spacing from header */
+    z-index: var(--z-form);
+    margin-top: 100px;
+    /* FIXED: Enable pointer events and cursor */
+    pointer-events: auto;
+    cursor: default;
 }
 
-@keyframes containerFloat {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-5px); } /* FIXED: Reduced float distance */
-}
-
-/* Form Boxes - FIXED Z-INDEX */
+/* FIXED Form Boxes - Prevented overlapping */
 .form-box {
     position: absolute;
     right: 0;
@@ -372,9 +341,14 @@ body {
     justify-content: center;
     color: var(--color-text-primary);
     text-align: center;
-    padding: var(--space-8); /* FIXED: Reduced padding */
-    z-index: calc(var(--z-form) + 5); /* FIXED: Above toggle */
+    padding: var(--space-6);
+    z-index: calc(var(--z-form) + 10);
     transition: all 0.6s ease-in-out 1.2s, visibility 0s 1s;
+    /* FIXED: Critical pointer events and cursor fixes */
+    pointer-events: auto;
+    cursor: default;
+    /* FIXED: Prevent overlapping with explicit positioning */
+    transform: translateZ(0);
 }
 
 .container.active .form-box {
@@ -383,14 +357,18 @@ body {
 
 .form-box.register {
     visibility: hidden;
+    /* FIXED: Prevent interaction when hidden */
+    pointer-events: none;
 }
 
 .container.active .form-box.register {
     visibility: visible;
+    /* FIXED: Enable interaction when visible */
+    pointer-events: auto;
 }
 
 .form-box h1 {
-    font-size: var(--font-size-3xl); /* FIXED: Reduced font size */
+    font-size: var(--font-size-3xl);
     font-weight: 700;
     margin-bottom: var(--space-2);
     background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
@@ -401,45 +379,58 @@ body {
 
 .form-box p {
     font-size: var(--font-size-sm);
-    margin-bottom: var(--space-6); /* FIXED: Reduced margin */
+    margin-bottom: var(--space-5);
     color: var(--color-text-secondary);
     line-height: 1.5;
 }
 
-/* Form Styles */
+/* FIXED Form Styles - Resolved cursor and clickability */
 form {
     width: 100%;
-    max-width: 300px; /* FIXED: Reduced max width */
+    max-width: 280px;
+    /* FIXED: Ensure forms are interactive */
+    pointer-events: auto;
 }
 
 .input-group {
-    margin-bottom: var(--space-4); /* FIXED: Reduced margin */
+    margin-bottom: var(--space-4);
+    /* FIXED: Ensure input groups are interactive */
+    pointer-events: auto;
 }
 
 .input-box {
     position: relative;
     display: flex;
     align-items: center;
+    /* FIXED: Ensure input boxes are interactive */
+    pointer-events: auto;
 }
 
 .input-box input {
     width: 100%;
-    padding: var(--space-3) var(--space-10) var(--space-3) var(--space-4); /* FIXED: Reduced padding */
+    padding: var(--space-3) var(--space-10) var(--space-3) var(--space-4);
     background: var(--color-surface);
     border-radius: var(--radius-xl);
     border: 1px solid var(--color-border);
     outline: none;
-    font-size: var(--font-size-sm); /* FIXED: Smaller font */
+    font-size: var(--font-size-sm);
     color: var(--color-text-primary);
     font-weight: 500;
     transition: all var(--transition-base);
     font-family: var(--font-family-primary);
+    /* FIXED: Critical cursor and interaction fixes */
+    pointer-events: auto;
+    cursor: text;
+    z-index: 10;
+    position: relative;
 }
 
 .input-box input:focus {
     border-color: var(--color-primary);
     background: var(--color-surface-hover);
     box-shadow: 0 0 0 3px var(--color-border-focus);
+    /* FIXED: Ensure focus state is interactive */
+    cursor: text;
 }
 
 .input-box input::placeholder {
@@ -457,11 +448,12 @@ form {
 
 .input-box i {
     position: absolute;
-    right: var(--space-4); /* FIXED: Adjusted position */
-    font-size: var(--font-size-base); /* FIXED: Smaller icon */
+    right: var(--space-4);
+    font-size: var(--font-size-base);
     color: var(--color-text-muted);
     transition: color var(--transition-base);
     pointer-events: none;
+    z-index: 5;
 }
 
 .input-box input:focus ~ i {
@@ -470,15 +462,22 @@ form {
 
 .password-toggle {
     position: absolute;
-    right: var(--space-10); /* FIXED: Adjusted position */
+    right: var(--space-10);
     background: none;
     border: none;
     color: var(--color-text-muted);
-    cursor: pointer;
-    padding: var(--space-1); /* FIXED: Reduced padding */
+    padding: var(--space-1);
     border-radius: var(--radius-md);
     transition: all var(--transition-base);
-    z-index: 1;
+    /* FIXED: Critical button interaction fixes */
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 15;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .password-toggle:hover {
@@ -502,7 +501,7 @@ form {
 
 .strength-bar {
     width: 100%;
-    height: 3px; /* FIXED: Thinner bar */
+    height: 3px;
     background: var(--color-surface);
     border-radius: var(--radius-full);
     overflow: hidden;
@@ -543,15 +542,18 @@ form {
 
 /* Forgot Link */
 .forgot-link {
-    margin: calc(-1 * var(--space-3)) 0 var(--space-3); /* FIXED: Reduced margin */
+    margin: calc(-1 * var(--space-2)) 0 var(--space-3);
     text-align: right;
 }
 
 .forgot-link a {
-    font-size: var(--font-size-xs); /* FIXED: Smaller font */
+    font-size: var(--font-size-xs);
     color: var(--color-primary);
     text-decoration: none;
     transition: color var(--transition-base);
+    /* FIXED: Ensure link is clickable */
+    pointer-events: auto;
+    cursor: pointer;
 }
 
 .forgot-link a:hover {
@@ -559,24 +561,28 @@ form {
     text-decoration: underline;
 }
 
-/* Button Styles */
+/* FIXED Button Styles - Resolved clickability issues */
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--space-2);
     font-family: var(--font-family-primary);
-    font-size: var(--font-size-sm); /* FIXED: Smaller font */
+    font-size: var(--font-size-sm);
     font-weight: 600;
     line-height: 1;
     border: none;
     border-radius: var(--radius-xl);
-    cursor: pointer;
     transition: all var(--transition-base);
     text-decoration: none;
     position: relative;
     overflow: hidden;
-    min-height: 44px; /* FIXED: Reduced height */
+    min-height: 42px;
+    /* FIXED: Critical button interaction fixes */
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 20;
+    touch-action: manipulation;
 }
 
 .btn-primary {
@@ -600,7 +606,7 @@ form {
     background: transparent;
     border: 2px solid var(--color-text-primary);
     color: var(--color-text-primary);
-    padding: var(--space-2) var(--space-6); /* FIXED: Reduced padding */
+    padding: var(--space-2) var(--space-6);
 }
 
 .btn-outline:hover {
@@ -619,6 +625,8 @@ form {
     position: relative;
     z-index: 2;
     transition: opacity var(--transition-base);
+    /* FIXED: Ensure text doesn't interfere with clicks */
+    pointer-events: none;
 }
 
 .btn-loader {
@@ -629,6 +637,8 @@ form {
     justify-content: center;
     opacity: 0;
     transition: opacity var(--transition-base);
+    /* FIXED: Ensure loader doesn't interfere with clicks */
+    pointer-events: none;
 }
 
 .btn.loading .btn-text {
@@ -640,7 +650,7 @@ form {
 }
 
 .spinner {
-    width: 18px; /* FIXED: Smaller spinner */
+    width: 18px;
     height: 18px;
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-top-color: white;
@@ -656,9 +666,9 @@ form {
 .divider {
     display: flex;
     align-items: center;
-    margin: var(--space-4) 0; /* FIXED: Reduced margin */
+    margin: var(--space-3) 0;
     color: var(--color-text-muted);
-    font-size: var(--font-size-xs); /* FIXED: Smaller font */
+    font-size: var(--font-size-xs);
 }
 
 .divider::before,
@@ -670,31 +680,35 @@ form {
 }
 
 .divider span {
-    padding: 0 var(--space-3); /* FIXED: Reduced padding */
+    padding: 0 var(--space-3);
 }
 
-/* Social Icons */
+/* FIXED Social Icons - Resolved clickability */
 .social-icons {
     display: flex;
     justify-content: center;
-    gap: var(--space-3); /* FIXED: Reduced gap */
-    margin-top: var(--space-4); /* FIXED: Reduced margin */
+    gap: var(--space-3);
+    margin-top: var(--space-3);
 }
 
 .social-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 42px; /* FIXED: Smaller buttons */
-    height: 42px;
+    width: 40px;
+    height: 40px;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-xl);
-    font-size: var(--font-size-base); /* FIXED: Smaller icon */
+    font-size: var(--font-size-base);
     color: var(--color-text-primary);
     background: var(--color-surface);
     backdrop-filter: blur(10px);
     transition: all var(--transition-base);
+    /* FIXED: Critical social button interaction fixes */
+    pointer-events: auto;
     cursor: pointer;
+    z-index: 15;
+    touch-action: manipulation;
 }
 
 .social-btn:hover {
@@ -720,12 +734,14 @@ form {
     color: #1877f2;
 }
 
-/* Toggle Box - FIXED Z-INDEX */
+/* FIXED Toggle Box - Prevented interference with forms */
 .toggle-box {
     position: absolute;
     width: 100%;
     height: 100%;
-    z-index: var(--z-toggle); /* FIXED: Proper z-index below forms */
+    z-index: var(--z-toggle);
+    /* FIXED: Prevent toggle from interfering with form interactions */
+    pointer-events: none;
 }
 
 .toggle-box::before {
@@ -736,9 +752,11 @@ form {
     height: 100%;
     background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
     border-radius: 150px;
-    z-index: 2;
+    z-index: 1;
     transition: 1.8s ease-in-out;
     box-shadow: 0 0 50px rgba(245, 158, 11, 0.3);
+    /* FIXED: Prevent background from interfering */
+    pointer-events: none;
 }
 
 .container.active .toggle-box::before {
@@ -754,10 +772,12 @@ form {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 3; /* FIXED: Above the before element */
+    z-index: 2;
     transition: 0.6s ease-in-out;
-    padding: 0 var(--space-8); /* FIXED: Reduced padding */
+    padding: 0 var(--space-6);
     text-align: center;
+    /* FIXED: Enable interaction for toggle panels */
+    pointer-events: auto;
 }
 
 .toggle-panel.toggle-left {
@@ -781,26 +801,26 @@ form {
 }
 
 .toggle-panel h2 {
-    font-size: var(--font-size-2xl); /* FIXED: Reduced font size */
+    font-size: var(--font-size-2xl);
     font-weight: 700;
-    margin-bottom: var(--space-3); /* FIXED: Reduced margin */
+    margin-bottom: var(--space-3);
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .toggle-panel p {
-    margin-bottom: var(--space-6); /* FIXED: Reduced margin */
-    font-size: var(--font-size-base); /* FIXED: Reduced font size */
+    margin-bottom: var(--space-6);
+    font-size: var(--font-size-base);
     line-height: 1.6;
     opacity: 0.9;
 }
 
-/* Floating Code Animation - FIXED Z-INDEX */
+/* FIXED Floating Code Animation - Prevented interference */
 .floating-code {
     position: absolute;
     inset: 0;
     pointer-events: none;
     overflow: hidden;
-    z-index: var(--z-floating-code); /* FIXED: Below forms */
+    z-index: var(--z-floating-code);
 }
 
 .code-snippet {
@@ -816,6 +836,8 @@ form {
     backdrop-filter: blur(10px);
     opacity: 0;
     animation: codeFloat 20s linear infinite;
+    /* FIXED: Ensure code snippets don't interfere */
+    pointer-events: none;
 }
 
 .code-snippet:nth-child(1) {
@@ -825,36 +847,29 @@ form {
 }
 
 .code-snippet:nth-child(2) {
-    top: 25%;
+    top: 35%;
     right: -200px;
-    animation-delay: 3s;
+    animation-delay: 4s;
     animation-direction: reverse;
 }
 
 .code-snippet:nth-child(3) {
-    top: 40%;
+    top: 55%;
     left: -250px;
-    animation-delay: 6s;
+    animation-delay: 8s;
 }
 
 .code-snippet:nth-child(4) {
-    top: 55%;
+    top: 75%;
     right: -180px;
-    animation-delay: 9s;
+    animation-delay: 12s;
     animation-direction: reverse;
 }
 
 .code-snippet:nth-child(5) {
-    top: 70%;
+    top: 25%;
     left: -150px;
-    animation-delay: 12s;
-}
-
-.code-snippet:nth-child(6) {
-    top: 85%;
-    right: -220px;
-    animation-delay: 15s;
-    animation-direction: reverse;
+    animation-delay: 16s;
 }
 
 @keyframes codeFloat {
@@ -870,7 +885,7 @@ form {
     }
 }
 
-/* Music Visualizer - FIXED Z-INDEX */
+/* Music Visualizer */
 .music-visualizer {
     position: fixed;
     bottom: var(--space-8);
@@ -883,8 +898,10 @@ form {
     border: 1px solid var(--color-border);
     border-radius: var(--radius-2xl);
     backdrop-filter: var(--backdrop-blur);
-    z-index: var(--z-visualizer); /* FIXED: Proper z-index */
+    z-index: var(--z-visualizer);
     box-shadow: var(--shadow-lg);
+    /* FIXED: Ensure visualizer is interactive if needed */
+    pointer-events: auto;
 }
 
 .visualizer-bars {
@@ -922,7 +939,7 @@ form {
     font-weight: 500;
 }
 
-/* Modal Styles - FIXED Z-INDEX */
+/* Modal Styles */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -935,6 +952,8 @@ form {
     visibility: hidden;
     transition: all var(--transition-base);
     backdrop-filter: blur(8px);
+    /* FIXED: Ensure modal is interactive */
+    pointer-events: auto;
 }
 
 .modal-overlay.show {
@@ -954,6 +973,8 @@ form {
     transition: transform var(--transition-base);
     max-width: 400px;
     margin: var(--space-5);
+    /* FIXED: Ensure modal content is interactive */
+    pointer-events: auto;
 }
 
 .modal-overlay.show .modal-content {
@@ -984,17 +1005,19 @@ form {
     line-height: 1.5;
 }
 
-/* Toast Notifications - FIXED Z-INDEX */
+/* Toast Notifications */
 .toast-container {
     position: fixed;
     top: var(--space-8);
     right: var(--space-8);
-    z-index: var(--z-tooltip);
+    z-index: calc(var(--z-tooltip) + 100);
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
     max-width: 400px;
-    margin-top: 80px; /* FIXED: Account for header height */
+    margin-top: 80px;
+    /* FIXED: Ensure toast container is interactive */
+    pointer-events: auto;
 }
 
 .toast {
@@ -1038,13 +1061,26 @@ form {
     border-color: rgba(59, 130, 246, 0.3);
 }
 
-/* Container Queries for Modern Responsive Design */
-@container (max-width: 768px) {
+/* FIXED Mobile Responsive - Prevented overlapping on mobile */
+@media screen and (max-width: 768px) {
+    body {
+        padding-top: 70px;
+    }
+    
+    .container {
+        width: 95vw;
+        height: calc(100vh - 140px);
+        margin-top: 80px;
+        margin: 10px auto;
+    }
+    
     .form-box {
         bottom: 0;
         width: 100%;
         height: 70%;
-        padding: var(--space-6) var(--space-4);
+        padding: var(--space-5) var(--space-4);
+        /* FIXED: Maintain interaction on mobile */
+        pointer-events: auto;
     }
 
     .container.active .form-box {
@@ -1101,27 +1137,15 @@ form {
     .floating-code {
         display: none;
     }
-}
-
-/* Traditional Media Queries for Fallback */
-@media screen and (max-width: 768px) {
-    body {
-        padding-top: 80px; /* FIXED: Reduced padding for mobile */
-    }
-    
-    .container {
-        margin-top: 100px; /* FIXED: Reduced margin for mobile */
-        height: min(500px, 75vh); /* FIXED: Smaller height on mobile */
-    }
     
     .auth-header {
         padding: var(--space-4);
-        height: 70px; /* FIXED: Smaller header on mobile */
+        height: 70px;
     }
 
     .header-content {
         flex-direction: column;
-        gap: var(--space-3); /* FIXED: Reduced gap */
+        gap: var(--space-3);
     }
 
     .music-visualizer {
@@ -1135,7 +1159,7 @@ form {
         right: var(--space-5);
         left: var(--space-5);
         max-width: none;
-        margin-top: 70px; /* FIXED: Account for smaller mobile header */
+        margin-top: 70px;
     }
 }
 
@@ -1143,12 +1167,12 @@ form {
     .container {
         margin: var(--space-2);
         border-radius: var(--radius-xl);
-        margin-top: 90px; /* FIXED: Smaller margin for small screens */
-        height: min(450px, 70vh); /* FIXED: Even smaller on very small screens */
+        margin-top: 80px;
+        height: calc(100vh - 120px);
     }
 
     .form-box {
-        padding: var(--space-5) var(--space-3);
+        padding: var(--space-4) var(--space-3);
     }
 
     .toggle-panel h2 {
@@ -1160,8 +1184,8 @@ form {
     }
 
     .social-btn {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
         font-size: var(--font-size-sm);
     }
 }
@@ -1177,13 +1201,8 @@ form {
     }
 
     .floating-code,
-    .cursor-follower,
     .blob {
         display: none !important;
-    }
-
-    .container {
-        animation: none;
     }
 }
 
@@ -1202,8 +1221,7 @@ form {
     .floating-code,
     .blob,
     #auth-3d-canvas,
-    #matrix-canvas,
-    .cursor-follower {
+    #matrix-canvas {
         display: none !important;
     }
 
