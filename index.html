@@ -7,25 +7,14 @@
     <meta name="description" content="Join AlgoRhythm - Advanced authentication with cutting-edge design">
     <meta name="theme-color" content="#F59E0B">
     
-    <!-- Preload critical resources -->
-    <link rel="preload" href="styles.css" as="style">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" as="style">
-    
     <!-- Stylesheets -->
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- External scripts - FIXED: Made them async to prevent blocking -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/three.min.js" async></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js" async></script>
 </head>
 <body>
     <!-- Skip to main content for accessibility -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
-    
-    <!-- Cursor follower -->
-    <div class="cursor-follower" aria-hidden="true"></div>
     
     <!-- Background effects -->
     <div class="blob blob-1" aria-hidden="true"></div>
@@ -255,7 +244,6 @@
             <div class="code-snippet">return generateJWT(payload);</div>
             <div class="code-snippet">if (user.isValid) {</div>
             <div class="code-snippet">await createSession(user);</div>
-            <div class="code-snippet">return { success: true };</div>
         </div>
     </main>
 
@@ -290,40 +278,7 @@
     <!-- Toast notifications container -->
     <div id="toast-container" class="toast-container" aria-live="polite" role="region" aria-label="Notifications"></div>
 
-    <!-- FIXED: Load script at the end and handle dependencies properly -->
-    <script>
-        // Wait for all dependencies to load before initializing
-        let scriptsLoaded = {
-            three: false,
-            gsap: false
-        };
-        
-        function checkScriptsAndInit() {
-            if (typeof THREE !== 'undefined') scriptsLoaded.three = true;
-            if (typeof gsap !== 'undefined') scriptsLoaded.gsap = true;
-            
-            // Initialize even if some scripts aren't loaded (graceful degradation)
-            if (Object.values(scriptsLoaded).some(loaded => loaded) || document.readyState === 'complete') {
-                if (typeof AuthManager === 'undefined') {
-                    const script = document.createElement('script');
-                    script.src = 'script.js';
-                    script.onload = () => console.log('✅ Script loaded successfully');
-                    script.onerror = () => console.error('❌ Failed to load script.js');
-                    document.head.appendChild(script);
-                }
-            }
-        }
-        
-        // Check periodically until ready
-        const initChecker = setInterval(() => {
-            checkScriptsAndInit();
-            if (window.authManager) {
-                clearInterval(initChecker);
-            }
-        }, 100);
-        
-        // Fallback initialization after 2 seconds
-        setTimeout(checkScriptsAndInit, 2000);
-    </script>
+    <!-- Load script at the end -->
+    <script src="script.js"></script>
 </body>
 </html>
