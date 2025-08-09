@@ -305,7 +305,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* Main Container */
+/* FIXED: Main Container - Clean positioning system */
 .container {
     position: relative;
     width: min(800px, 90vw);
@@ -323,13 +323,14 @@ body {
     cursor: default;
 }
 
-/* FIXED: Login and Register positioning - Your solution integrated */
+/* FIXED: Clean form positioning - No conflicting rules */
 .form-box {
     position: absolute;
     top: 0;
     height: 100%;
+    width: 50%;
     background: rgba(255, 255, 255, 0.02);
-    display: flex;
+    display: flex !important; /* Force display */
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -338,42 +339,62 @@ body {
     padding: var(--space-6);
     pointer-events: auto;
     cursor: default;
-    transform: translateZ(0);
+    /* FIXED: Remove all conflicting transforms and opacity rules */
+    transform: none !important;
+    transition: all 0.6s ease-in-out;
 }
 
-/* Login form positioning */
+/* FIXED: Login form - Always visible on left */
 .form-box.login {
     left: 0;
-    width: 50%;
-    opacity: 1;
-    pointer-events: auto;
-    z-index: 2;
-    transition: all 0.6s ease-in-out;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 10;
 }
 
-/* Register form positioning */
+/* FIXED: Register form - Initially hidden on right */  
 .form-box.register {
     right: 0;
-    width: 50%;
-    opacity: 0;
+    opacity: 0 !important;
+    visibility: hidden !important;
     pointer-events: none;
-    z-index: 1;
-    transition: all 0.6s ease-in-out;
+    z-index: 5;
 }
 
-/* Slide animation when active */
+/* FIXED: When container is active (signup mode) */
 .container.active .form-box.login {
-    transform: translateX(-100%);
-    opacity: 0;
+    opacity: 0 !important;
+    visibility: hidden !important;
     pointer-events: none;
-    z-index: 1;
+    z-index: 5;
+    transform: translateX(-100%) !important;
 }
 
 .container.active .form-box.register {
-    transform: translateX(-100%);
-    opacity: 1;
+    opacity: 1 !important;
+    visibility: visible !important;
     pointer-events: auto;
-    z-index: 2;
+    z-index: 10;
+    transform: translateX(-100%) !important;
+}
+
+/* FIXED: Ensure all child elements are always visible when parent is visible */
+.form-box * {
+    opacity: 1 !important;
+    display: block !important;
+}
+
+.form-box input,
+.form-box button,
+.form-box .input-box,
+.form-box .input-group {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.form-box .input-group {
+    display: block !important;
 }
 
 .form-box h1 {
@@ -384,32 +405,67 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    display: block !important;
+    opacity: 1 !important;
 }
 
 .form-box p {
     font-size: var(--font-size-sm);
-    margin-bottom: var(--space-5);
+    margin-bottom: var(--space-4);
     color: var(--color-text-secondary);
     line-height: 1.5;
+    display: block !important;
+    opacity: 1 !important;
 }
 
-/* Form Styles */
+/* Social signup section styling */
+.social-signup-section {
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: var(--space-4);
+    display: block !important;
+    opacity: 1 !important;
+}
+
+.social-signup-section .social-icons {
+    margin-top: 0;
+    margin-bottom: var(--space-3);
+    gap: var(--space-4);
+    display: flex !important;
+    opacity: 1 !important;
+}
+
+.social-signup-section .divider {
+    margin: var(--space-3) 0 var(--space-4);
+    font-size: var(--font-size-xs);
+    display: flex !important;
+    opacity: 1 !important;
+}
+
+/* FIXED: Form Styles - Force visibility */
 form {
     width: 100%;
     max-width: 280px;
     pointer-events: auto;
+    display: block !important;
+    opacity: 1 !important;
 }
 
 .input-group {
     margin-bottom: var(--space-4);
     pointer-events: auto;
+    display: block !important;
+    opacity: 1 !important;
+    min-height: 60px; /* Debug: minimum height */
 }
 
 .input-box {
     position: relative;
-    display: flex;
+    display: flex !important;
     align-items: center;
     pointer-events: auto;
+    opacity: 1 !important;
+    min-height: 40px; /* Debug: minimum height */
 }
 
 .input-box input {
@@ -428,6 +484,10 @@ form {
     cursor: text;
     z-index: 10;
     position: relative;
+    /* FIXED: Force input visibility */
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .input-box input:focus {
@@ -458,6 +518,8 @@ form {
     transition: color var(--transition-base);
     pointer-events: none;
     z-index: 5;
+    opacity: 1 !important;
+    display: block !important;
 }
 
 .input-box input:focus ~ i {
@@ -478,9 +540,11 @@ form {
     z-index: 15;
     width: 24px;
     height: 24px;
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .password-toggle:hover {
@@ -488,18 +552,21 @@ form {
     background: var(--color-surface);
 }
 
-/* Error Messages */
+/* FIXED: Error Messages - Force visibility */
 .error-message {
     font-size: var(--font-size-xs);
     color: var(--color-error);
     margin-top: var(--space-1);
     min-height: 1rem;
-    display: block;
+    display: block !important;
+    opacity: 1 !important;
 }
 
-/* Password Strength Indicator */
+/* FIXED: Password Strength Indicator - Force visibility */
 .password-strength {
     margin-top: var(--space-2);
+    display: block !important;
+    opacity: 1 !important;
 }
 
 .strength-bar {
@@ -509,6 +576,8 @@ form {
     border-radius: var(--radius-full);
     overflow: hidden;
     margin-bottom: var(--space-1);
+    display: block !important;
+    opacity: 1 !important;
 }
 
 .strength-fill {
@@ -541,12 +610,16 @@ form {
 .strength-text {
     font-size: var(--font-size-xs);
     color: var(--color-text-muted);
+    display: block !important;
+    opacity: 1 !important;
 }
 
-/* Forgot Link */
+/* FIXED: Forgot Link - Force visibility */
 .forgot-link {
     margin: calc(-1 * var(--space-2)) 0 var(--space-3);
     text-align: right;
+    display: block !important;
+    opacity: 1 !important;
 }
 
 .forgot-link a {
@@ -556,6 +629,8 @@ form {
     transition: color var(--transition-base);
     pointer-events: auto;
     cursor: pointer;
+    display: inline !important;
+    opacity: 1 !important;
 }
 
 .forgot-link a:hover {
@@ -563,9 +638,9 @@ form {
     text-decoration: underline;
 }
 
-/* Button Styles */
+/* FIXED: Button Styles - Force visibility */
 .btn {
-    display: inline-flex;
+    display: inline-flex !important;
     align-items: center;
     justify-content: center;
     gap: var(--space-2);
@@ -584,6 +659,8 @@ form {
     cursor: pointer;
     z-index: 20;
     touch-action: manipulation;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .btn-primary {
@@ -627,6 +704,8 @@ form {
     z-index: 2;
     transition: opacity var(--transition-base);
     pointer-events: none;
+    display: block !important;
+    opacity: 1 !important;
 }
 
 .btn-loader {
@@ -661,13 +740,14 @@ form {
     to { transform: rotate(360deg); }
 }
 
-/* Divider */
+/* FIXED: Divider - Force visibility */
 .divider {
-    display: flex;
+    display: flex !important;
     align-items: center;
     margin: var(--space-3) 0;
     color: var(--color-text-muted);
     font-size: var(--font-size-xs);
+    opacity: 1 !important;
 }
 
 .divider::before,
@@ -680,18 +760,21 @@ form {
 
 .divider span {
     padding: 0 var(--space-3);
+    display: block !important;
+    opacity: 1 !important;
 }
 
-/* Social Icons */
+/* FIXED: Social Icons - Force visibility */
 .social-icons {
-    display: flex;
+    display: flex !important;
     justify-content: center;
     gap: var(--space-3);
     margin-top: var(--space-3);
+    opacity: 1 !important;
 }
 
 .social-btn {
-    display: inline-flex;
+    display: inline-flex !important;
     align-items: center;
     justify-content: center;
     width: 40px;
@@ -707,6 +790,8 @@ form {
     cursor: pointer;
     z-index: 15;
     touch-action: manipulation;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .social-btn:hover {
@@ -1051,7 +1136,7 @@ form {
     border-color: rgba(59, 130, 246, 0.3);
 }
 
-/* Mobile Responsive - UPDATED for new positioning */
+/* Mobile Responsive */
 @media screen and (max-width: 768px) {
     body {
         padding-top: 70px;
@@ -1064,15 +1149,16 @@ form {
         margin: 10px auto;
     }
     
-    /* UPDATED: Mobile form positioning */
+    /* Mobile form positioning */
     .form-box.login {
         left: 0;
         top: 30%;
         width: 100%;
         height: 70%;
-        opacity: 1;
+        opacity: 1 !important;
+        visibility: visible !important;
         pointer-events: auto;
-        z-index: 2;
+        z-index: 10;
     }
 
     .form-box.register {
@@ -1080,24 +1166,27 @@ form {
         top: 100%;
         width: 100%;
         height: 70%;
-        opacity: 0;
+        opacity: 0 !important;
+        visibility: hidden !important;
         pointer-events: none;
-        z-index: 1;
+        z-index: 5;
     }
 
     .container.active .form-box.login {
-        transform: translateY(-100%);
-        opacity: 0;
+        transform: translateY(-100%) !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
         pointer-events: none;
-        z-index: 1;
+        z-index: 5;
     }
 
     .container.active .form-box.register {
-        transform: translateY(-100%);
+        transform: translateY(-100%) !important;
         top: 30%;
-        opacity: 1;
+        opacity: 1 !important;
+        visibility: visible !important;
         pointer-events: auto;
-        z-index: 2;
+        z-index: 10;
     }
 
     .toggle-box::before {
@@ -1201,6 +1290,21 @@ form {
         font-size: var(--font-size-sm);
     }
 }
+
+/* FIXED: Debug borders - Remove after testing */
+/* Uncomment these lines to see container boundaries:
+.form-box {
+    border: 2px solid red !important;
+}
+
+.input-group {
+    border: 1px solid yellow !important;
+}
+
+.input-box {
+    border: 1px solid green !important;
+}
+*/
 
 /* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
