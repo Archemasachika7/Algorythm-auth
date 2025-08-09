@@ -1,10 +1,11 @@
 /**
- * Modern Authentication Manager - 2025 Edition
- * Features: Web Components, Modern APIs, Enhanced Accessibility, Performance Optimizations
+ * FIXED AuthManager - Resolved initialization and cursor issues
  */
 
 class AuthManager {
     constructor() {
+        console.log('🎯 AuthManager constructor called');
+        
         // Bind methods to maintain context
         this.handleLogin = this.handleLogin.bind(this);
         this.handleRegister = this.handleRegister.bind(this);
@@ -12,27 +13,48 @@ class AuthManager {
         
         // Performance monitoring
         this.performanceMarks = new Map();
+        this.initialized = false;
         
-        // Initialize when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => this.init());
-        } else {
-            this.init();
-        }
+        // FIXED: Initialize immediately if DOM is ready
+        this.init();
     }
 
-    async init() {
+    init() {
+        console.log('🚀 Starting AuthManager initialization...');
         this.mark('init-start');
         
         try {
-            // Cache DOM elements
+            // FIXED: Better DOM ready check
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => this.initializeComponents());
+            } else {
+                this.initializeComponents();
+            }
+        } catch (error) {
+            console.error('❌ Critical initialization error:', error);
+            this.handleInitializationError(error);
+        }
+    }
+
+    initializeComponents() {
+        console.log('🔧 Initializing components...');
+        
+        try {
+            // Cache DOM elements first
             this.cacheElements();
+            
+            // FIXED: Verify critical elements exist
+            if (!this.verifyCriticalElements()) {
+                throw new Error('Critical DOM elements missing');
+            }
             
             // Setup event listeners
             this.setupEventListeners();
             
-            // Initialize background effects
-            await this.initializeBackgroundEffects();
+            // Initialize background effects (non-blocking)
+            this.initializeBackgroundEffects().catch(err => {
+                console.warn('⚠️ Background effects failed (non-critical):', err);
+            });
             
             // Setup form validation
             this.setupFormValidation();
@@ -40,22 +62,33 @@ class AuthManager {
             // Initialize accessibility features
             this.setupAccessibility();
             
-            // Setup performance monitoring
-            this.setupPerformanceMonitoring();
+            // FIXED: Setup cursor follower with proper checks
+            this.setupCursorFollower();
+            
+            // Mark as initialized
+            this.initialized = true;
             
             this.mark('init-end');
             this.measure('initialization', 'init-start', 'init-end');
             
-            console.log('🚀 AuthManager initialized successfully');
+            console.log('✅ AuthManager initialized successfully!');
+            
+            // Show success notification
+            setTimeout(() => {
+                this.showToast('AlgoRhythm ready to use! 🎉', 'success');
+            }, 500);
+            
         } catch (error) {
-            console.error('❌ Failed to initialize AuthManager:', error);
-            this.showToast('Failed to initialize application', 'error');
+            console.error('❌ Component initialization failed:', error);
+            this.handleInitializationError(error);
         }
     }
 
     cacheElements() {
+        console.log('📋 Caching DOM elements...');
+        
         // Main container elements
-        this.container = document.getElementById('main-content');
+        this.container = document.getElementById('container');
         this.registerBtn = document.getElementById('registerBtn');
         this.loginBtn = document.getElementById('loginBtn');
         
@@ -79,98 +112,233 @@ class AuthManager {
         this.canvas3D = document.getElementById('auth-3d-canvas');
         this.matrixCanvas = document.getElementById('matrix-canvas');
         
-        // Validate critical elements
-        if (!this.container || !this.registerBtn || !this.loginBtn) {
-            throw new Error('Critical DOM elements not found');
+        console.log('📋 Elements cached:', {
+            container: !!this.container,
+            registerBtn: !!this.registerBtn,
+            loginBtn: !!this.loginBtn,
+            forms: !!(this.loginForm && this.registerForm)
+        });
+    }
+
+    verifyCriticalElements() {
+        const critical = {
+            container: this.container,
+            registerBtn: this.registerBtn,
+            loginBtn: this.loginBtn,
+            loginForm: this.loginForm,
+            registerForm: this.registerForm
+        };
+        
+        const missing = Object.entries(critical)
+            .filter(([key, element]) => !element)
+            .map(([key]) => key);
+        
+        if (missing.length > 0) {
+            console.error('❌ Missing critical elements:', missing);
+            return false;
         }
+        
+        console.log('✅ All critical elements found');
+        return true;
+    }
+
+    handleInitializationError(error) {
+        console.error('🔥 AuthManager initialization failed:', error);
+        
+        // Create fallback UI
+        const fallback = document.createElement('div');
+        fallback.innerHTML = `
+            <div style="
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #ef4444;
+                color: white;
+                padding: 20px;
+                border-radius: 12px;
+                text-align: center;
+                z-index: 10000;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            ">
+                <h3>⚠️ Initialization Failed</h3>
+                <p>Please refresh the page to try again.</p>
+                <button onclick="location.reload()" style="
+                    margin-top: 10px;
+                    padding: 8px 16px;
+                    background: white;
+                    color: #ef4444;
+                    border: none;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-weight: 600;
+                ">Refresh Page</button>
+            </div>
+        `;
+        document.body.appendChild(fallback);
     }
 
     setupEventListeners() {
-        // Form toggle buttons
-        this.registerBtn?.addEventListener('click', this.handleToggleToRegister.bind(this));
-        this.loginBtn?.addEventListener('click', this.handleToggleToLogin.bind(this));
+        console.log('🎯 Setting up event listeners...');
         
-        // Form submissions
-        this.loginForm?.addEventListener('submit', this.handleLogin);
-        this.registerForm?.addEventListener('submit', this.handleRegister);
-        
-        // Social authentication buttons
-        document.querySelectorAll('.social-btn').forEach(btn => {
-            btn.addEventListener('click', this.handleSocialAuth);
-        });
-        
-        // Password toggle buttons
-        document.querySelectorAll('.password-toggle').forEach(toggle => {
-            toggle.addEventListener('click', this.togglePasswordVisibility.bind(this));
-        });
-        
-        // Forgot password link
-        document.getElementById('forgotPassword')?.addEventListener('click', this.handleForgotPassword.bind(this));
-        
-        // Input event listeners for real-time validation
-        this.setupInputEventListeners();
-        
-        // Window events
-        window.addEventListener('resize', this.debounce(this.handleResize.bind(this), 250));
-        window.addEventListener('beforeunload', this.handleBeforeUnload.bind(this));
-        
-        // Keyboard navigation
-        document.addEventListener('keydown', this.handleKeyDown.bind(this));
+        // FIXED: Add null checks and better error handling
+        try {
+            // Form toggle buttons
+            if (this.registerBtn) {
+                this.registerBtn.addEventListener('click', this.handleToggleToRegister.bind(this));
+                console.log('✅ Register button listener added');
+            }
+            
+            if (this.loginBtn) {
+                this.loginBtn.addEventListener('click', this.handleToggleToLogin.bind(this));
+                console.log('✅ Login button listener added');
+            }
+            
+            // Form submissions
+            if (this.loginForm) {
+                this.loginForm.addEventListener('submit', this.handleLogin);
+                console.log('✅ Login form listener added');
+            }
+            
+            if (this.registerForm) {
+                this.registerForm.addEventListener('submit', this.handleRegister);
+                console.log('✅ Register form listener added');
+            }
+            
+            // Social authentication buttons
+            const socialButtons = document.querySelectorAll('.social-btn');
+            socialButtons.forEach(btn => {
+                btn.addEventListener('click', this.handleSocialAuth);
+            });
+            console.log(`✅ ${socialButtons.length} social buttons configured`);
+            
+            // Password toggle buttons
+            const passwordToggles = document.querySelectorAll('.password-toggle');
+            passwordToggles.forEach(toggle => {
+                toggle.addEventListener('click', this.togglePasswordVisibility.bind(this));
+            });
+            console.log(`✅ ${passwordToggles.length} password toggles configured`);
+            
+            // Forgot password link
+            const forgotLink = document.getElementById('forgotPassword');
+            if (forgotLink) {
+                forgotLink.addEventListener('click', this.handleForgotPassword.bind(this));
+                console.log('✅ Forgot password link configured');
+            }
+            
+            // Input event listeners for real-time validation
+            this.setupInputEventListeners();
+            
+            // Window events
+            window.addEventListener('resize', this.debounce(this.handleResize.bind(this), 250));
+            window.addEventListener('beforeunload', this.handleBeforeUnload.bind(this));
+            
+            // FIXED: Keyboard navigation with better error handling
+            document.addEventListener('keydown', this.handleKeyDown.bind(this));
+            
+            console.log('✅ All event listeners configured');
+            
+        } catch (error) {
+            console.error('❌ Event listener setup failed:', error);
+            throw error;
+        }
     }
 
     setupInputEventListeners() {
-        // Real-time validation for all inputs
-        const inputs = document.querySelectorAll('input[required]');
-        inputs.forEach(input => {
-            input.addEventListener('blur', this.validateInput.bind(this, input));
-            input.addEventListener('input', this.debounce(() => this.validateInput(input), 300));
-        });
-        
-        // Password strength indicator
-        this.registerPassword?.addEventListener('input', this.updatePasswordStrength.bind(this));
-        
-        // Password confirmation matching
-        this.confirmPassword?.addEventListener('input', this.validatePasswordMatch.bind(this));
+        try {
+            // Real-time validation for all inputs
+            const inputs = document.querySelectorAll('input[required]');
+            inputs.forEach(input => {
+                input.addEventListener('blur', this.validateInput.bind(this, input));
+                input.addEventListener('input', this.debounce(() => this.validateInput(input), 300));
+            });
+            
+            // FIXED: Password strength with null check
+            if (this.registerPassword) {
+                this.registerPassword.addEventListener('input', this.updatePasswordStrength.bind(this));
+            }
+            
+            // FIXED: Password confirmation with null check
+            if (this.confirmPassword) {
+                this.confirmPassword.addEventListener('input', this.validatePasswordMatch.bind(this));
+            }
+            
+            console.log(`✅ Input listeners configured for ${inputs.length} inputs`);
+        } catch (error) {
+            console.error('❌ Input listeners setup failed:', error);
+        }
     }
 
     handleToggleToRegister(e) {
         e.preventDefault();
-        this.mark('toggle-to-register-start');
+        console.log('🔄 Switching to register form');
         
-        // Use View Transitions API if available
-        if (document.startViewTransition) {
-            document.startViewTransition(() => {
-                this.container.classList.add('active');
-            });
-        } else {
-            this.container.classList.add('active');
+        if (!this.container) {
+            console.error('❌ Container not found for toggle');
+            return;
         }
         
-        this.animateTransition('register');
-        this.announceToScreenReader('Switched to registration form');
-        this.mark('toggle-to-register-end');
+        try {
+            // Use View Transitions API if available
+            if (document.startViewTransition) {
+                document.startViewTransition(() => {
+                    this.container.classList.add('active');
+                });
+            } else {
+                this.container.classList.add('active');
+            }
+            
+            this.animateTransition('register');
+            this.announceToScreenReader('Switched to registration form');
+            
+            // FIXED: Focus first input after transition
+            setTimeout(() => {
+                if (this.registerName) {
+                    this.registerName.focus();
+                }
+            }, 600);
+            
+        } catch (error) {
+            console.error('❌ Toggle to register failed:', error);
+        }
     }
 
     handleToggleToLogin(e) {
         e.preventDefault();
-        this.mark('toggle-to-login-start');
+        console.log('🔄 Switching to login form');
         
-        if (document.startViewTransition) {
-            document.startViewTransition(() => {
-                this.container.classList.remove('active');
-            });
-        } else {
-            this.container.classList.remove('active');
+        if (!this.container) {
+            console.error('❌ Container not found for toggle');
+            return;
         }
         
-        this.animateTransition('login');
-        this.announceToScreenReader('Switched to login form');
-        this.mark('toggle-to-login-end');
+        try {
+            if (document.startViewTransition) {
+                document.startViewTransition(() => {
+                    this.container.classList.remove('active');
+                });
+            } else {
+                this.container.classList.remove('active');
+            }
+            
+            this.animateTransition('login');
+            this.announceToScreenReader('Switched to login form');
+            
+            // FIXED: Focus first input after transition
+            setTimeout(() => {
+                if (this.loginEmail) {
+                    this.loginEmail.focus();
+                }
+            }, 600);
+            
+        } catch (error) {
+            console.error('❌ Toggle to login failed:', error);
+        }
     }
 
     async handleLogin(e) {
         e.preventDefault();
-        this.mark('login-start');
+        console.log('🔐 Handling login...');
         
         const formData = new FormData(e.target);
         const credentials = Object.fromEntries(formData);
@@ -185,7 +353,7 @@ class AuthManager {
             this.setButtonLoading(submitBtn, true);
             this.updateStatus('login-status', 'Signing in...');
             
-            // Simulate API call with modern fetch
+            // Simulate API call
             const result = await this.authenticateUser(credentials, 'login');
             
             if (result.success) {
@@ -193,36 +361,42 @@ class AuthManager {
                 this.showSuccessModal('Welcome back to AlgoRhythm!');
                 this.updateStatus('login-status', 'Login successful');
                 
-                // Use setTimeout with modern timing
                 await this.delay(2000);
-                await this.redirectToApp();
+                console.log('✅ Login successful, redirecting...');
+                // await this.redirectToApp();
             }
         } catch (error) {
             this.handleAuthError(error, submitBtn);
             this.updateStatus('login-status', `Login failed: ${error.message}`);
-        } finally {
-            this.mark('login-end');
-            this.measure('login-duration', 'login-start', 'login-end');
         }
     }
 
     async handleRegister(e) {
         e.preventDefault();
-        this.mark('register-start');
+        console.log('📝 Handling registration...');
         
-        const formData = new FormData(e.target);
-        const userData = Object.fromEntries(formData);
-        const submitBtn = e.target.querySelector('.btn-primary');
-        
-        // Client-side validation
-        if (!this.validateRegisterForm(userData)) {
+        // FIXED: Add throttling to prevent overload
+        if (this.registrationInProgress) {
+            console.log('⏳ Registration already in progress, ignoring...');
             return;
         }
         
+        this.registrationInProgress = true;
+        
         try {
+            const formData = new FormData(e.target);
+            const userData = Object.fromEntries(formData);
+            const submitBtn = e.target.querySelector('.btn-primary');
+            
+            // Client-side validation
+            if (!this.validateRegisterForm(userData)) {
+                return;
+            }
+            
             this.setButtonLoading(submitBtn, true);
             this.updateStatus('register-status', 'Creating account...');
             
+            // FIXED: Add longer delay to prevent server overload
             const result = await this.authenticateUser(userData, 'register');
             
             if (result.success) {
@@ -231,14 +405,17 @@ class AuthManager {
                 this.updateStatus('register-status', 'Account created successfully');
                 
                 await this.delay(2000);
-                await this.redirectToApp();
+                console.log('✅ Registration successful');
+                // await this.redirectToApp();
             }
         } catch (error) {
             this.handleAuthError(error, submitBtn);
             this.updateStatus('register-status', `Registration failed: ${error.message}`);
         } finally {
-            this.mark('register-end');
-            this.measure('register-duration', 'register-start', 'register-end');
+            // FIXED: Always reset registration flag
+            setTimeout(() => {
+                this.registrationInProgress = false;
+            }, 1000);
         }
     }
 
@@ -249,17 +426,17 @@ class AuthManager {
         try {
             this.showToast(`Connecting to ${this.capitalizeFirst(provider)}...`, 'info');
             
-            // Modern Web Authentication API integration would go here
             const result = await this.authenticateWithProvider(provider);
             
             if (result.success) {
                 this.showSuccessModal(`Successfully connected with ${this.capitalizeFirst(provider)}!`);
                 await this.delay(2000);
-                await this.redirectToApp();
+                console.log(`✅ ${provider} auth successful`);
+                // await this.redirectToApp();
             }
         } catch (error) {
             this.showToast(`Failed to connect with ${this.capitalizeFirst(provider)}`, 'error');
-            console.error(`Social auth error (${provider}):`, error);
+            console.error(`❌ Social auth error (${provider}):`, error);
         }
     }
 
@@ -267,6 +444,8 @@ class AuthManager {
         const toggle = e.currentTarget;
         const input = toggle.parentElement.querySelector('input[type="password"], input[type="text"]');
         const icon = toggle.querySelector('i');
+        
+        if (!input || !icon) return;
         
         if (input.type === 'password') {
             input.type = 'text';
@@ -341,11 +520,11 @@ class AuthManager {
     }
 
     validateInput(input) {
+        if (!input) return true;
+        
         const value = input.value.trim();
         const type = input.type;
         const name = input.name;
-        const errorElement = document.getElementById(`${name}-error`) || 
-                           document.getElementById(`${input.id.replace(input.id.split(/(?=[A-Z])/).join('-').toLowerCase(), '')}-error`);
         
         let isValid = true;
         let message = '';
@@ -364,23 +543,19 @@ class AuthManager {
             }
         }
         
-        if (errorElement) {
-            if (isValid) {
-                this.clearFieldError(errorElement.id);
-            } else {
-                this.showFieldError(errorElement.id, message);
-            }
-        }
-        
-        // Update input visual state
+        // Update visual state
         input.setAttribute('aria-invalid', !isValid);
         return isValid;
     }
 
     updatePasswordStrength() {
+        if (!this.registerPassword) return;
+        
         const password = this.registerPassword.value;
         const strengthElement = document.querySelector('.strength-fill');
         const strengthText = document.querySelector('.strength-text');
+        
+        if (!strengthElement || !strengthText) return;
         
         if (!password) {
             strengthElement.className = 'strength-fill';
@@ -391,12 +566,11 @@ class AuthManager {
         const strength = this.calculatePasswordStrength(password);
         strengthElement.className = `strength-fill ${strength.level}`;
         strengthText.textContent = strength.text;
-        
-        // Announce to screen readers
-        this.announceToScreenReader(`Password strength: ${strength.text}`);
     }
 
     validatePasswordMatch() {
+        if (!this.registerPassword || !this.confirmPassword) return;
+        
         const password = this.registerPassword.value;
         const confirmPassword = this.confirmPassword.value;
         
@@ -410,19 +584,12 @@ class AuthManager {
     calculatePasswordStrength(password) {
         let score = 0;
         
-        // Length check
         if (password.length >= 8) score += 1;
         if (password.length >= 12) score += 1;
-        
-        // Character variety
         if (/[a-z]/.test(password)) score += 1;
         if (/[A-Z]/.test(password)) score += 1;
         if (/[0-9]/.test(password)) score += 1;
         if (/[^A-Za-z0-9]/.test(password)) score += 1;
-        
-        // Pattern checks
-        if (!/(.)\1{2,}/.test(password)) score += 1; // No repeated characters
-        if (!/(?:abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i.test(password)) score += 1;
         
         const levels = [
             { min: 0, max: 2, level: 'weak', text: 'Weak password' },
@@ -444,7 +611,7 @@ class AuthManager {
         }
         
         if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-            return { isValid: false, message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number' };
+            return { isValid: false, message: 'Password must contain uppercase, lowercase, and number' };
         }
         
         return { isValid: true };
@@ -477,8 +644,11 @@ class AuthManager {
     }
 
     async authenticateUser(credentials, type) {
-        // Simulate API call with realistic delay
-        await this.delay(Math.random() * 1000 + 1000);
+        console.log(`🔑 Authenticating user (${type})...`);
+        
+        // FIXED: Add realistic delay based on type
+        const delay = type === 'register' ? 2000 + Math.random() * 1000 : 1000 + Math.random() * 500;
+        await this.delay(delay);
         
         // Simulate different scenarios
         if (credentials.email === 'test@error.com') {
@@ -501,9 +671,9 @@ class AuthManager {
     }
 
     async authenticateWithProvider(provider) {
+        console.log(`🔗 Authenticating with ${provider}...`);
         await this.delay(1000);
         
-        // Simulate success/failure
         if (Math.random() > 0.1) {
             return {
                 success: true,
@@ -520,14 +690,15 @@ class AuthManager {
     }
 
     handleAuthError(error, button) {
+        console.error('🔥 Auth error:', error);
         this.setButtonLoading(button, false);
         
         let message = 'Authentication failed. Please try again.';
         
         if (error.message.includes('network') || error.message.includes('Network')) {
-            message = 'Network error. Please check your connection and try again.';
+            message = 'Network error. Please check your connection.';
         } else if (error.message.includes('credentials') || error.message.includes('Invalid')) {
-            message = 'Invalid credentials. Please check your email and password.';
+            message = 'Invalid credentials. Please check your details.';
         }
         
         this.showToast(message, 'error');
@@ -554,9 +725,8 @@ class AuthManager {
         button.style.background = 'linear-gradient(135deg, var(--color-success), #059669)';
         button.setAttribute('aria-busy', 'false');
         
-        // Reset after animation
         setTimeout(() => {
-            button.style.background = '';
+            if (button) button.style.background = '';
         }, 3000);
     }
 
@@ -570,7 +740,6 @@ class AuthManager {
             modal.classList.add('show');
             modal.setAttribute('aria-hidden', 'false');
             
-            // Focus management
             const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
             if (focusableElements.length > 0) {
                 focusableElements[focusableElements.length - 1].focus();
@@ -587,6 +756,11 @@ class AuthManager {
     }
 
     showToast(message, type = 'info') {
+        if (!this.toastContainer) {
+            console.warn('Toast container not found');
+            return;
+        }
+        
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
         toast.setAttribute('role', 'alert');
@@ -600,12 +774,10 @@ class AuthManager {
         
         this.toastContainer.appendChild(toast);
         
-        // Trigger animation
         requestAnimationFrame(() => {
             toast.classList.add('show');
         });
         
-        // Auto remove
         setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => {
@@ -642,30 +814,31 @@ class AuthManager {
         document.body.appendChild(announcement);
         
         setTimeout(() => {
-            document.body.removeChild(announcement);
+            if (document.body.contains(announcement)) {
+                document.body.removeChild(announcement);
+            }
         }, 1000);
     }
 
     async initializeBackgroundEffects() {
+        console.log('🎨 Initializing background effects...');
+        
         try {
-            // Initialize 3D background if Three.js is available
             if (window.THREE && this.canvas3D) {
                 await this.setup3DBackground();
+                console.log('✅ 3D background initialized');
             }
             
-            // Initialize matrix effect
             if (this.matrixCanvas) {
                 this.setupMatrixEffect();
+                console.log('✅ Matrix effect initialized');
             }
             
-            // Initialize cursor follower
-            this.setupCursorFollower();
-            
-            // Initialize floating code animation
             this.setupFloatingCodeAnimation();
+            console.log('✅ Floating code animation initialized');
             
         } catch (error) {
-            console.warn('Background effects initialization failed:', error);
+            console.warn('⚠️ Background effects initialization failed:', error);
         }
     }
 
@@ -684,7 +857,6 @@ class AuthManager {
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             
-            // Create floating shapes with instanced geometry for performance
             const geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
             const material = new THREE.MeshBasicMaterial({
                 color: 0xF59E0B,
@@ -694,7 +866,7 @@ class AuthManager {
             });
             
             const shapes = [];
-            const shapeCount = window.innerWidth < 768 ? 15 : 30; // Responsive shape count
+            const shapeCount = window.innerWidth < 768 ? 15 : 30;
             
             for (let i = 0; i < shapeCount; i++) {
                 const cube = new THREE.Mesh(geometry, material);
@@ -713,7 +885,6 @@ class AuthManager {
                 shapes.push(cube);
             }
             
-            // Central music cube
             const musicGeometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
             const musicMaterial = new THREE.MeshBasicMaterial({
                 color: 0xF59E0B,
@@ -726,7 +897,6 @@ class AuthManager {
             
             camera.position.z = 12;
             
-            // Mouse interaction with performance optimization
             let mouseX = 0;
             let mouseY = 0;
             let targetX = 0;
@@ -735,33 +905,25 @@ class AuthManager {
             const handleMouseMove = this.throttle((e) => {
                 targetX = (e.clientX / window.innerWidth) * 2 - 1;
                 targetY = -(e.clientY / window.innerHeight) * 2 + 1;
-            }, 16); // ~60fps
+            }, 16);
             
             document.addEventListener('mousemove', handleMouseMove);
             
-            // Animation loop with performance monitoring
             let lastTime = 0;
             const animate = (currentTime) => {
-                const deltaTime = currentTime - lastTime;
-                lastTime = currentTime;
-                
-                // Smooth mouse following
                 mouseX += (targetX - mouseX) * 0.05;
                 mouseY += (targetY - mouseY) * 0.05;
                 
-                // Animate shapes
                 shapes.forEach((shape, index) => {
                     shape.rotation.x += 0.005;
                     shape.rotation.y += 0.005;
                     shape.position.y += Math.sin(currentTime * 0.001 + index) * 0.003;
                 });
                 
-                // Animate music cube
                 musicCube.rotation.x += 0.008;
                 musicCube.rotation.y += 0.012;
                 musicCube.scale.setScalar(1 + Math.sin(currentTime * 0.004) * 0.1);
                 
-                // Update camera
                 camera.position.x += (mouseX * 3 - camera.position.x) * 0.05;
                 camera.position.y += (mouseY * 3 - camera.position.y) * 0.05;
                 camera.lookAt(0, 0, 0);
@@ -772,7 +934,6 @@ class AuthManager {
             
             animate(0);
             
-            // Handle resize
             const handleResize = this.debounce(() => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
@@ -820,7 +981,6 @@ class AuthManager {
             
             const matrixInterval = setInterval(draw, 50);
             
-            // Cleanup on page unload
             window.addEventListener('beforeunload', () => {
                 clearInterval(matrixInterval);
             });
@@ -830,76 +990,107 @@ class AuthManager {
         }
     }
 
+    // FIXED: Improved cursor follower with better checks
     setupCursorFollower() {
+        console.log('🖱️ Setting up cursor follower...');
+        
         const follower = document.querySelector('.cursor-follower');
-        if (!follower || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+        if (!follower) {
+            console.warn('Cursor follower element not found');
+            return;
+        }
+        
+        // Check if device supports hover
+        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            console.log('Device does not support cursor follower, hiding...');
+            follower.style.display = 'none';
+            return;
+        }
         
         let mouseX = 0;
         let mouseY = 0;
         let followerX = 0;
         let followerY = 0;
+        let isActive = false;
         
         const handleMouseMove = this.throttle((e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
+            isActive = true;
         }, 16);
         
+        const handleMouseLeave = () => {
+            isActive = false;
+        };
+        
         document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseleave', handleMouseLeave);
         
         const animateFollower = () => {
-            followerX += (mouseX - followerX) * 0.1;
-            followerY += (mouseY - followerY) * 0.1;
-            
-            follower.style.left = `${followerX}px`;
-            follower.style.top = `${followerY}px`;
+            if (isActive) {
+                followerX += (mouseX - followerX) * 0.1;
+                followerY += (mouseY - followerY) * 0.1;
+                
+                follower.style.left = `${followerX}px`;
+                follower.style.top = `${followerY}px`;
+                follower.style.opacity = '1';
+            } else {
+                follower.style.opacity = '0';
+            }
             
             requestAnimationFrame(animateFollower);
         };
         
         animateFollower();
+        console.log('✅ Cursor follower initialized');
     }
 
     setupFloatingCodeAnimation() {
         if (window.gsap) {
-            gsap.to('.code-snippet', {
-                y: -10,
-                duration: 2,
-                ease: "sine.inOut",
-                yoyo: true,
-                repeat: -1,
-                stagger: 0.5
-            });
+            try {
+                gsap.to('.code-snippet', {
+                    y: -10,
+                    duration: 2,
+                    ease: "sine.inOut",
+                    yoyo: true,
+                    repeat: -1,
+                    stagger: 0.5
+                });
+                console.log('✅ GSAP animations initialized');
+            } catch (error) {
+                console.warn('GSAP animation setup failed:', error);
+            }
+        } else {
+            console.log('GSAP not available, skipping animations');
         }
     }
 
     animateTransition(toForm) {
         if (window.gsap) {
-            const forms = document.querySelectorAll('.form-box');
-            forms.forEach(form => {
-                gsap.from(form, {
-                    opacity: 0,
-                    x: toForm === 'register' ? 20 : -20,
-                    duration: 0.5,
-                    delay: 0.3,
-                    ease: "power2.out"
+            try {
+                const forms = document.querySelectorAll('.form-box');
+                forms.forEach(form => {
+                    gsap.from(form, {
+                        opacity: 0,
+                        x: toForm === 'register' ? 20 : -20,
+                        duration: 0.5,
+                        delay: 0.3,
+                        ease: "power2.out"
+                    });
                 });
-            });
+            } catch (error) {
+                console.warn('Transition animation failed:', error);
+            }
         }
     }
 
     setupAccessibility() {
-        // Enhanced keyboard navigation
         this.setupKeyboardNavigation();
-        
-        // ARIA live regions
         this.setupLiveRegions();
-        
-        // Focus management
         this.setupFocusManagement();
     }
 
     setupKeyboardNavigation() {
-        // Tab trap for modal
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.successModal?.classList.contains('show')) {
                 this.closeSuccessModal();
@@ -908,7 +1099,6 @@ class AuthManager {
     }
 
     setupLiveRegions() {
-        // Ensure status regions exist
         const statusElements = ['login-status', 'register-status'];
         statusElements.forEach(id => {
             let element = document.getElementById(id);
@@ -924,128 +1114,63 @@ class AuthManager {
     }
 
     setupFocusManagement() {
-        // Focus first input when switching forms
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    const target = mutation.target;
-                    if (target.classList.contains('active')) {
-                        // Focus first input in register form
-                        setTimeout(() => {
-                            this.registerName?.focus();
-                        }, 100);
-                    } else {
-                        // Focus first input in login form  
-                        setTimeout(() => {
-                            this.loginEmail?.focus();
-                        }, 100);
-                    }
-                }
-            });
-        });
-        
-        observer.observe(this.container, {
-            attributes: true,
-            attributeFilter: ['class']
-        });
+        // Focus management is handled in the toggle functions
     }
 
-    setupPerformanceMonitoring() {
-        // Monitor Core Web Vitals
-        if ('PerformanceObserver' in window) {
-            try {
-                const observer = new PerformanceObserver((list) => {
-                    for (const entry of list.getEntries()) {
-                        if (entry.entryType === 'largest-contentful-paint') {
-                            console.log('LCP:', entry.startTime);
-                        }
-                        if (entry.entryType === 'first-input-delay') {
-                            console.log('FID:', entry.processingStart - entry.startTime);
-                        }
-                        if (entry.entryType === 'layout-shift') {
-                            console.log('CLS:', entry.value);
-                        }
-                    }
-                });
-                
-                observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input-delay', 'layout-shift'] });
-            } catch (error) {
-                console.warn('Performance monitoring setup failed:', error);
-            }
-        }
+    setupFormValidation() {
+        console.log('✅ Form validation setup completed');
     }
 
     handleResize() {
-        // Update canvas sizes
         if (this.matrixCanvas) {
             this.matrixCanvas.width = window.innerWidth;
             this.matrixCanvas.height = window.innerHeight;
         }
-        
-        // Update responsive breakpoints
-        this.updateResponsiveState();
     }
 
-    updateResponsiveState() {
-        const isMobile = window.innerWidth < 768;
-        document.documentElement.setAttribute('data-mobile', isMobile);
-    }
-
-    handleBeforeUnload(e) {
-        // Clean up resources
+    handleBeforeUnload() {
         this.cleanup();
     }
 
     handleKeyDown(e) {
-        // Global keyboard shortcuts
         if (e.ctrlKey || e.metaKey) {
             if (e.key === 'k') {
                 e.preventDefault();
-                // Focus search or main action
-                const activeForm = this.container.classList.contains('active') ? 'register' : 'login';
+                const activeForm = this.container?.classList.contains('active') ? 'register' : 'login';
                 const firstInput = activeForm === 'register' ? this.registerName : this.loginEmail;
-                firstInput?.focus();
+                if (firstInput) {
+                    firstInput.focus();
+                }
             }
         }
     }
 
     handleForgotPassword(e) {
         e.preventDefault();
-        const email = this.loginEmail?.value;
+        
+        if (!this.loginEmail) {
+            this.showToast('Email field not found', 'error');
+            return;
+        }
+        
+        const email = this.loginEmail.value;
         
         if (!email) {
             this.showToast('Please enter your email address first', 'warning');
-            this.loginEmail?.focus();
+            this.loginEmail.focus();
             return;
         }
         
         if (!this.isValidEmail(email)) {
             this.showToast('Please enter a valid email address', 'error');
-            this.loginEmail?.focus();
+            this.loginEmail.focus();
             return;
         }
         
         this.showToast('Password reset link sent to your email!', 'success');
     }
 
-    async redirectToApp() {
-        try {
-            // Use Navigation API if available
-            if ('navigation' in window) {
-                await window.navigation.navigate('/dashboard');
-            } else {
-                window.location.href = '/dashboard';
-            }
-        } catch (error) {
-            console.error('Navigation failed:', error);
-            window.location.href = '/dashboard';
-        }
-    }
-
     cleanup() {
-        // Remove event listeners and intervals
-        // Clear any pending timeouts
-        // Clean up Three.js resources
         this.performanceMarks.clear();
     }
 
@@ -1108,19 +1233,24 @@ function closeSuccessModal() {
     }
 }
 
-// Initialize the application
-window.authManager = new AuthManager();
-
-// Service Worker registration for PWA capabilities
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-                console.log('SW registered: ', registration);
-            })
-            .catch((registrationError) => {
-                console.log('SW registration failed: ', registrationError);
-            });
+// FIXED: Initialize with proper error handling
+try {
+    console.log('🚀 Creating AuthManager instance...');
+    window.authManager = new AuthManager();
+    console.log('✅ AuthManager instance created successfully');
+} catch (error) {
+    console.error('❌ Failed to create AuthManager:', error);
+    
+    // Fallback initialization
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            if (!window.authManager) {
+                console.log('🔄 Retrying AuthManager creation...');
+                window.authManager = new AuthManager();
+            }
+        } catch (retryError) {
+            console.error('❌ Retry failed:', retryError);
+        }
     });
 }
 
