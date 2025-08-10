@@ -1,0 +1,16 @@
+{
+  "name": "algorhythm-auth",
+  "version": "1.0.0",
+  "description": "AlgoRhythm Authentication System",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx live-server --port=3000 --host=0.0.0.0 --no-browser",
+    "start": "npx live-server --port=3000 --host=0.0.0.0 --no-browser"
+  },
+  "keywords": ["authentication", "login", "signup", "algorhythm"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}
