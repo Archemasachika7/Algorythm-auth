@@ -406,7 +406,10 @@ class AuthManager {
     }
 
     showSuccessModal(message) {
-        if (!this.successModal) return;
+        if (!this.successModal) {
+            this.successModal = document.getElementById('successModal');
+            if (!this.successModal) return;
+        }
         
         const messageEl = document.getElementById('successMessage');
         if (messageEl) messageEl.textContent = message;
@@ -418,13 +421,19 @@ class AuthManager {
     }
 
     closeSuccessModal() {
-        if (this.successModal) {
+        if (this.successModal && this.successModal.classList.contains('show')) {
             this.successModal.classList.remove('show');
         }
     }
 
     showToast(message, type = 'info') {
-        if (!this.toastContainer) return;
+        if (!this.toastContainer) {
+            // Create toast container if it doesn't exist
+            this.toastContainer = document.createElement('div');
+            this.toastContainer.id = 'toast-container';
+            this.toastContainer.className = 'toast-container';
+            document.body.appendChild(this.toastContainer);
+        }
         
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;

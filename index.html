@@ -68,7 +68,7 @@
                     <i class="fas fa-lock"></i>
                 </div>
                 
-                <button type="submit" class="btn">
+                <button type="submit" class="btn btn-primary">
                     <span class="btn-text">Sign Up</span>
                     <div class="btn-loader">
                         <div class="spinner"></div>
@@ -76,9 +76,9 @@
                 </button>
                 
                 <div class="social-icons">
-                    <a href="#" class="google-btn"><i class="fab fa-google"></i></a>
-                    <a href="#" class="github-btn"><i class="fab fa-github"></i></a>
-                    <a href="#" class="facebook-btn"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-btn google-btn"><i class="fab fa-google"></i></a>
+                    <a href="#" class="social-btn github-btn"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-btn facebook-btn"><i class="fab fa-facebook-f"></i></a>
                 </div>
             </form>
         </div>
@@ -103,7 +103,7 @@
                     <a href="#" id="forgotPassword">Forgot Password?</a>
                 </div>
                 
-                <button type="submit" class="btn">
+                <button type="submit" class="btn btn-primary">
                     <span class="btn-text">Sign In</span>
                     <div class="btn-loader">
                         <div class="spinner"></div>
@@ -111,9 +111,9 @@
                 </button>
                 
                 <div class="social-icons">
-                    <a href="#" class="google-btn"><i class="fab fa-google"></i></a>
-                    <a href="#" class="github-btn"><i class="fab fa-github"></i></a>
-                    <a href="#" class="facebook-btn"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-btn google-btn"><i class="fab fa-google"></i></a>
+                    <a href="#" class="social-btn github-btn"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-btn facebook-btn"><i class="fab fa-facebook-f"></i></a>
                 </div>
             </form>
         </div>
@@ -123,12 +123,12 @@
             <div class="toggle-panel toggle-left">
                 <h1>Welcome Back!</h1>
                 <p>Enter your personal details to use all of AlgoRhythm features</p>
-                <button class="btn" id="loginBtn">Sign In</button>
+                <button class="btn btn-outline" id="loginBtn">Sign In</button>
             </div>
             <div class="toggle-panel toggle-right">
                 <h1>Hello, Friend!</h1>
                 <p>Register with your personal details to use all of AlgoRhythm features</p>
-                <button class="btn" id="registerBtn">Sign Up</button>
+                <button class="btn btn-outline" id="registerBtn">Sign Up</button>
             </div>
         </div>
     </div>
@@ -150,16 +150,19 @@
     </div>
 
     <!-- Success Modal -->
-    <div class="success-modal" id="successModal">
+    <div class="modal-overlay" id="successModal">
         <div class="modal-content">
             <div class="success-icon">
                 <i class="fas fa-check-circle"></i>
             </div>
             <h3>Success!</h3>
             <p id="successMessage">Welcome to AlgoRhythm!</p>
-            <button class="btn" onclick="closeSuccessModal()">Continue</button>
+            <button class="btn btn-primary" onclick="closeSuccessModal()">Continue</button>
         </div>
     </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
